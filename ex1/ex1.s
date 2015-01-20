@@ -84,6 +84,18 @@
     .type   _reset, %function
     .thumb_func
     _reset:
+
+        // Enable GPIO IO-clock.
+
+        ldr r1, CMU_BASE
+        ldr r2, [r1, #CMU_HFPERCLKEN0]
+
+        mov r3, #1
+        lsl r3, #CMU_HFPERCLKEN0_GPIO
+        orr r2, r2, r3
+
+        str r2, [r1, #CMU_HFPERCLKEN0]
+
         b .  // do nothing
 
     /////////////////////////////////////////////////////////////////////////////
