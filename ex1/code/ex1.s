@@ -190,7 +190,7 @@
     button_7_not_pushed:
 	
     mov r3, r2
-    and r3, r3 0x10
+    and r3, r3, 0x10
     cbz r3, button_5_not_pushed
     
     ldr r3, [r1, GPIO_DOUT]
