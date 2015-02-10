@@ -185,7 +185,8 @@
         
     ldr r3, [r1, GPIO_DOUT]
     mvn r3, r3
-    lsr r3, r3, 1
+    lsl r3, r3, 1
+    and r3, r3, 0xff00
     mvn r3, r3
     str r3, [r1, GPIO_DOUT]
 
@@ -197,7 +198,8 @@
     
     ldr r3, [r1, GPIO_DOUT]
     mvn r3, r3
-    lsl r3, r3, 1
+    lsr r3, r3, 1
+    and r3, r3, 0xff00
     mvn r3, r3
     str r3, [r1, GPIO_DOUT]
     
