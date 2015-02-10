@@ -2,6 +2,7 @@
 \usepackage{blindtext}
 \usepackage{graphicx}
 \usepackage{subfiles}
+\usepackage[detect-all]{siunitx}
 
 \begin{document}
 
@@ -15,8 +16,9 @@
 \maketitle
 
 \begin{abstract}
-%\boldmath
-\blindtext[1]
+    A simple program for controling a series of LEDs using gamepad buttons was written in ARM Thumb 2 assembly for the ARM Cortex-M3 microcontroller on a EFM32GG DK3750 board.
+    The resulting solution makes full use of the deep sleep feature of the microcontroller, and other powersaving features.
+    The microcontroller used \SI{1.53}{\micro\ampere} when idle.
 \end{abstract}
 
 % Chapters goes here.
