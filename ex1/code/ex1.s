@@ -184,7 +184,9 @@
     cbz r3, button_7_not_pushed
         
     ldr r3, [r1, GPIO_DOUT]
+    mvn r3, r3
     lsr r3, r3, 1
+    mvn r3, r3
     str r3, [r1, GPIO_DOUT]
 
     button_7_not_pushed:
@@ -194,7 +196,9 @@
     cbz r3, button_5_not_pushed
     
     ldr r3, [r1, GPIO_DOUT]
+    mvn r3, r3
     lsl r3, r3, 1
+    mvn r3, r3
     str r3, [r1, GPIO_DOUT]
     
     button_5_not_pushed:
