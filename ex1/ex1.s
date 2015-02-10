@@ -170,11 +170,9 @@
         ldr r1, =GPIO_PA_BASE
         ldr r2, [r0, GPIO_IF]
         str r2, [r0, GPIO_IFC]
-        lsl r2, 8
 
-	// Handle SW7         
-	and r2, r2, 0xBF00 
-	mvn r2, r2	
+	// Handle SW7     
+	and r2, r2, 0x4000 	
 	lsr r2, 14
 
 	ldr r3, [r1, GPIO_DIN]
