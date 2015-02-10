@@ -173,22 +173,34 @@
         ldr r0, =GPIO_BASE
         ldr r1, =GPIO_PA_BASE
         
-	ldr r2, [r0, GPIO_IF]
+    ldr r2, [r0, GPIO_IF]
         str r2, [r0, GPIO_IFC]
-	
-	// mvn r3, r2	
-	// and r3, r3, 0x4000
+    
+    // mvn r3, r2	
+    // and r3, r3, 0x4000
 
-	mov r3, r2 // Handle SW7
-	and r3, r3, 0x40
-	cbz r3, button_7_not_pushed
+    mov r3, r2 // Handle SW7
+    and r3, r3, 0x40
+    cbz r3, button_7_not_pushed
         
-	ldr r3, [r1, GPIO_DOUT]
-	lsr r3, r3, 1
-	str r3, [r1, GPIO_DOUT]
-	button_7_not_pushed:
+    ldr r3, [r1, GPIO_DOUT]
+    lsr r3, r3, 1
+    str r3, [r1, GPIO_DOUT]
+
+    button_7_not_pushed:
 	
-        bx lr
+    mov r3, r2
+    and r3, r3 0x10
+    cbz r3, button_5_not_pushed
+    
+    ldr r3, [r1, GPIO_DOUT]
+    lsl r3, r3, 1
+    str r3, [r1, GPIO_DOUT]
+    
+    button_5_not_pushed:
+
+
+    bx lr
 
     /////////////////////////////////////////////////////////////////////////////
 
