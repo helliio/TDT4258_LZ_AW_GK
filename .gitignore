@@ -1,4 +1,7 @@
-*.swp
+### Unwanted outputs ###
+*.pdf
+
+### Assemby compilation ###
 *.bin
 *.elf
 *.o
