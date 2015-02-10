@@ -113,7 +113,7 @@
         // Note that DOUT is active low.
         // Make sure the pins are GND to begin with.
         mov r2, 0xfe00
-        str r2, [r1, GPIO_DOUT]
+        //str r2, [r1, GPIO_DOUT]
 
 
         // == Setup inputs on port C ==
