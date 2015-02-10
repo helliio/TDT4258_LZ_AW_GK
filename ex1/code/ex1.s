@@ -85,60 +85,69 @@
     .thumb_func
     _reset:
 
-        // Enable GPIO IO-clock.
+        // == Enable GPIO IO-clock ==
 
         ldr r1, =CMU_BASE
-        ldr r2, [r1, #CMU_HFPERCLKEN0]
+        ldr r2, [r1, CMU_HFPERCLKEN0]
 
-        mov r3, #1
-        lsl r3, #CMU_HFPERCLKEN0_GPIO
+        mov r3, 1
+        lsl r3, CMU_HFPERCLKEN0_GPIO
         orr r2, r2, r3
 
-        str r2, [r1, #CMU_HFPERCLKEN0]
+        str r2, [r1, CMU_HFPERCLKEN0]
 
 
         // == Setup outputs in port A ==
 
         ldr r1, =GPIO_PA_BASE
 
-        // Port A pins 8-15: set to push-pull with alternative drive strength.
-
-        ldr r2, =0x55555555
-        str r2, [r1, #GPIO_MODEH]
-
-        // Set drive strength on port A to 2mA (low)
+        // Set alternative drive strength on port A to 2mA (low)
         // High drive strength results in eyebleed.
-        mov r2, #0x3
-        str r2, [r1, #GPIO_CTRL]
+        mov r2, 0x3
+        str r2, [r1, GPIO_CTRL]
 
-        mvn r2, #0x5500
-        str r2, [r1, #GPIO_DOUT]
+        // Port A pins 8-15: set to push-pull with alternative drive strength.
+        ldr r2, =0x55555555
+        str r2, [r1, GPIO_MODEH]
+
+        // Note that DOUT is active low.
+        // Make sure the pins are GND to begin with.
+        mov r2, 0xfe00
+        str r2, [r1, GPIO_DOUT]
 
 
         // == Setup inputs on port C ==
 
         ldr r1, =GPIO_PC_BASE
 
-        // Port C pins 0-7: set to input with pull and glich-filter enabled.
-
-        ldr r2, =0x33333333
-        str r2, [r1, #GPIO_MODEL]
-        // Port C pins 0-7: set pull to up.
-        mov r2, #0xff
+        // Port C pins 0-7: set pull direction to up.
+        mov r2, 0xff
         str r2, [r1, GPIO_DOUT]
+
+        // Set Port C pins 0-7 to input with pull and glich-filter enabled.
+        ldr r2, =0x33333333
+        str r2, [r1, GPIO_MODEL]
 
         // Set interrupt generation source on GPIO pins 0-7 to port C.
         ldr r1, =GPIO_BASE
         ldr r2, =0x22222222
-        str r2, [r1, #GPIO_EXTIPSELL]
+        str r2, [r1, GPIO_EXTIPSELL]
+
         // Enable interupt generation on both rise and fall.
-        mov r2, #0xff
-        str r2, [r1, #GPIO_EXTIRISE]
-        str r2, [r1, #GPIO_EXTIFALL]
+        mov r2, 0xff
+        str r2, [r1, GPIO_EXTIFALL]
+        str r2, [r1, GPIO_IEN]
 
-        str r2, [r1, #GPIO_IEN]
 
-        // == Setup complete, enable interrupts ==
+        // == Setup sleep ==
+
+        // Enable SLEEPDEEP and SLEEPONEXIT
+        ldr r1, =SCR
+        mov r2, 0x6
+        str r2, [r1]
+
+
+        // == Enable interrupt handlers ==
 
         // Enable GPIO interrupt handlers (odd and even).
         // GPIO interrupts are IRQ 1 and 11.
@@ -146,16 +155,11 @@
         ldr r2, =ISER0
         str r1, [r2]
 
-        // == Interupts enabled, setup sleep ==
 
-        // Enable SLEEPDEEP and SLEEPONEXIT
-        ldr r1, =SCR
-        mov r2, 0x6
-        str r2, [r1]
+        // == Setup complete ==
 
         // Wait for interrupt
-        //wfi
-        b .
+        wfi
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -168,24 +172,28 @@
     gpio_handler:
         ldr r0, =GPIO_BASE
         ldr r1, =GPIO_PA_BASE
-        ldr r2, [r0, GPIO_IF]
+        
+	ldr r2, [r0, GPIO_IF]
         str r2, [r0, GPIO_IFC]
-
-	// Handle SW7     
-	and r2, r2, 0x4000 	
-	lsr r2, 14
-
-	ldr r3, [r1, GPIO_DIN]
-	lsl r3, r2	 
 	
-	str r3, [r1, GPIO_DOUT]	
+	// mvn r3, r2	
+	// and r3, r3, 0x4000
+
+	mov r3, r2 // Handle SW7
+	and r3, r3, 0x40
+	cbz r3, button_7_not_pushed
+        
+	ldr r3, [r1, GPIO_DOUT]
+	lsr r3, r3, 1
+	str r3, [r1, GPIO_DOUT]
+	button_7_not_pushed:
 	
-	// mvn r2, 0x0A00
-	// str r2, [r1, #GPIO_DOUT]
         bx lr
 
     /////////////////////////////////////////////////////////////////////////////
 
+
+	
     .thumb_func
     dummy_handler:
         b .  // do nothing
