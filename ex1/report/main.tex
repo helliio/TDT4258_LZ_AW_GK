@@ -5,7 +5,7 @@
 \usepackage[detect-all]{siunitx}
 
 \title{
-    \textsc{A Simple Assembly Program for the ARM Cortex-M3}\\
+    \textsc{Saving Energy on ARM Cortex-M3}\\
     Exercise 1 in TDT4258
 }
 
@@ -22,13 +22,19 @@
 \maketitle
 
 \begin{abstract}
-    A simple program for controling a series of LEDs using gamepad buttons was written in ARM Thumb 2 assembly for the ARM Cortex-M3 microcontroller on a EFM32GG DK3750 board.
-    The resulting solution makes full use of the deep sleep feature of the microcontroller, and other powersaving features.
-    The microcontroller used \SI{1.53}{\micro\ampere} when idle, making this a very energy efficient solution.
+    For the purpose of familiarizing the team with low level programming of the microcontroller used during the course, a simple assembly program was written in ARM Thumb 2 assembly for the ARM Cortex-M3 microcontroller on a EFM32GG DK3750 board.
+    The program controlled a series of LEDs using gamepad buttons.
+    The usage of power-saving features of the microcontroller were iterativly introduced to the program.
+    The development board facilitated taking power measurments between each step.
+    The resulting solution makes full use of the deep sleep feature of the microcontroller to enable maximum power efficiency with the given hardware.
 \end{abstract}
 
 % Chapters go here.
 \subfile{chapters/introduction.tex}
+\subfile{chapters/hardware.tex}
+\subfile{chapters/handouts.tex}
+\subfile{chapters/development.tex}
+
 \subfile{bibliography.tex}
 
 \end{document}
