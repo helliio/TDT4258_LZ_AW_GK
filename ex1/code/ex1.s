@@ -113,7 +113,6 @@
         // Note that DOUT is active low.
         // Make sure the pins are GND to begin with.
         mov r2, 0xfe00
-        //str r2, [r1, GPIO_DOUT]
 
 
         // == Setup inputs on port C ==
@@ -176,8 +175,6 @@
     ldr r2, [r0, GPIO_IF]
         str r2, [r0, GPIO_IFC]
     
-    // mvn r3, r2	
-    // and r3, r3, 0x4000
 
     mov r3, r2 // Handle SW7
     and r3, r3, 0x40
