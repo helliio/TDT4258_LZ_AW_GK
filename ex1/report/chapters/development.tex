@@ -18,13 +18,13 @@ This using the \texttt{.req} directive of the assembler convenient aliases for t
 
 \begin{minted}{objdump}
 GPIO_I .req r4
-ldr GPIO_I =GPIO_PC
+ldr GPIO_I, =GPIO_PC
 
 GPIO_O .req r5
-ldr GPIO_O =GPIO_PA
+ldr GPIO_O, =GPIO_PA
 
 GPIO .req r6
-ldr GPIO =GPIO_BASE
+ldr GPIO, =GPIO_BASE
 \end{minted}
 
 
@@ -37,9 +37,10 @@ Before the GPIO-controller can be configured, the CMU must be set to enable the 
 This is done by setting bit 13 in the CMU\_HFPERCLKEN0 register.
 
 \begin{minted}{objdump}
-    ldr r1 [GPIO, #CMU_HFPERCLKEN0]
-    orr r1, #(1<<CMU_HFPERCLKEN0_GPIO)
-    str r1, [GPIO, #CMU_HFPERCLKEN0]
+    ldr r2, =CMU_BASE
+    ldr r1, [r2, #CMU_HFPERCLKEN0]
+    orr r1, #( 1<< CMU_HFPERCLKEN0_GPIO )
+    str r1, [r2, #CMU_HFPERCLKEN0]
 \end{minted}
 
 
@@ -92,7 +93,7 @@ This was tested in the debugger:
 Then the input was shown on the LEDs.
 The left shift maps the inputs on pins 0--7 to the outputs on 8--15:
 \begin{minted}{objdump}
-loop$
+loop:
     ldr r1, [GPIO_I, GPIO_DIN]
     lsl r1, r1, #8
     str r1, [GPIO_O, GPIO_DOUT]
@@ -123,7 +124,7 @@ Enable GPIO interrupt handlers in the microcontroller.
 Even numbered GPIO detectors use handler 1.
 Odd numbered use handler 11:
 \begin{minted}{objdump}
-    ldr r1, =( 1<<1 | 1<<11 )
+    ldr r1, =( 1<< 1 | 1<< 11 )
     ldr r2, =ISER0
     str r1, [r2]
 \end{minted}
@@ -163,8 +164,8 @@ Since all work after setup was done in the gpio interrupt handler, another featu
 
 Deep sleep mode and sleep on exit was enabled in the System Control Register:
 \begin{minted}{objdump}
-    ldr r1 =( 1<<1 | 1<<2 )
-    ldr r2 =SCR
+    ldr r1, =( 1<< 1 | 1<< 2 )
+    ldr r2, =SC,R
     str r1, [r2]
 \end{minted}
 
