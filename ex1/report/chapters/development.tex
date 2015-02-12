@@ -1,3 +1,5 @@
+\documentclass[../main.tex]{subfiles}
+
 \section{Development}
 The development was carried out in natural stages of adding complexity.
 
@@ -11,3 +13,21 @@ At startup, to save power, the external controllers are not clocked.
 As such it is not possible to comunicate with the controller.
 Thus before the GPIO-controller can be configured, the CMU must be set to enable the HFPERCLK for the GPIO-controller.
 This is done by setting bit 13 in the CMU\_HFPERCLKEN0 register.
+
+\subsection{Enabling and using the gamepad}
+
+After the setup for the GPIO output was finished we enabled the input from the gamepad. The first thing was to enable the pull up resisters on the GPIO pins C0 to C7 by writing 0xff to GPIO\_DOUT.  
+
+\begin{lstlisting}[frame=single]
+mov r2, 0xff
+str r2, [r1, GPIO_DOUT]
+\end{lstlisting}
+
+Then the gamepad buttons was set as inputs with the pull and glitch-filter by writing 0x33333333 to GPIO\_PC\_MODEL. 
+
+
+\begin{lstlisting}[frame=single]
+ldr r2, =0x33333333
+str r2, [r1, GPIO_MODEL]
+\end{lstlisting}
+
