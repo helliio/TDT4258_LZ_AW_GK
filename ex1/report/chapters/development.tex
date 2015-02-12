@@ -67,3 +67,34 @@ Turn off a pattern of the LEDs by setting outputs of even pins 8--15 to high:
 \end{minted}
 
 This produced the expected pattern on the ligths.
+
+
+\subsection{Reading input}
+The next step was to show which buttons are pressed using the lights.
+To do that input was configured on port A pins 0--7 with pull-ups.
+
+Set pull direction of pins 0--7 to up:
+\begin{minted}{objdump}
+    ldr r1, =0x00ff
+    str r1, [GPIO_I, GPIO_DOUT]
+\end{minted}
+
+Set mode of pins 0--7 to input with pull and glich filter enabled:
+\begin{minted}{objdump}
+    ldr r1, =0x33333333
+    str r1, [GPIO_I, GPIO_MODEL]
+\end{minted}
+
+At this point, input could be read of off GPIO\_PA\_DIN.
+This was tested in the debugger:
+\todo{Show steps}
+
+Then the input was shown on the LEDs.
+The left shift maps the inputs on pins 0--7 to the outputs on 8--15:
+\begin{minted}{objdump}
+loop:
+    ldr r1, [GPIO_I, GPIO_DIN]
+    lsl r1, r1, #8
+    str r1, [GPIO_O, GPIO_DOUT]
+    b loop
+\end{minted}
