@@ -202,5 +202,8 @@
         wfi
 	
     .thumb_func
+    gpio_handler:
+        b .  // do nothing
+    .thumb_func
     dummy_handler:
         b .  // do nothing
