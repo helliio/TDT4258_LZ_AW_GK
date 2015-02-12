@@ -124,7 +124,7 @@ Even numbered GPIO detectors use handler 1.
 Odd numbered use handler 11:
 \begin{minted}{objdump}
     ldr r1, =ISER0
-    ldr r2, =(1<<1 + 1<<11)
+    ldr r2, =(1<<1 | 1<<11)
     str r2, [r1]
 \end{minted}
 
