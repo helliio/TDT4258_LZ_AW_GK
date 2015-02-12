@@ -31,3 +31,32 @@ ldr r2, =0x33333333
 str r2, [r1, GPIO_MODEL]
 \end{lstlisting}
 
+\subsection{Interrupts}
+	\label{ss:interrupts}
+\subsection{Demonstration}
+
+As an extra learning exercise for the team, a small demo was implemented. After the interrupt was triggered and the code in gpio\_handler was executed when a button was pushed as described in the section \ref{ss:interrupts}. 
+
+The first demo flashed the light representing the button pushed. This was achived by shifting GPIO\_IFC by 8 so the button pushed now represented which LED that should light up. Then it was stored to GPIO\_DOUT.
+
+\begin{lstlisting}[frame=single]
+ldr r2, [r0, GPIO_IF]
+lsl r2, 8
+str r2, [r1, GPIO_DOUT]
+\end{lstlisting}
+
+After this solution was tested, a more complex demo was developed. It showed a bar that could be increased or decreased based on input from two of the buttons. This solution branched if a button was pushed by masking the desired button. As an example, for the gamepad button SW7 a mask was made to disable all other input signal when checking. For SW7, the mask 0x40 was used. If $0 \neq \text{GPIO\_IF} \wedge \text{0x40}$ then the code meant to be trigged by the input on SW7 would run. If not, it would branch over it.
+
+If SW7 was pushed, the bar was supposed to move to the left. Shifting GPIO\_DOUT by one did this. Then the result of this was masked with 0xff00 to make sure that the LEDs doesnt under or overflow. The formula for the expression was $\overline{ (\overline{\text{GPIO\_DOUT}} \ll 1) \wedge \text{0xff00} }$. We used this expression instead of a simpler one to maintain code readability. 
+
+When implementing the expression above the following code was used.
+\begin{lstlisting}[frame=single]
+mvn r3, r3
+lsl r3, r3, 1
+and r3, r3, 0xff00
+mvn r3, r3
+str r3, [r1, GPIO_DOUT]
+\end{lstlisting}
+
+The command mvn was used to invert the register.
+
