@@ -192,7 +192,7 @@
             
         button_5_not_pushed:
         
-        b r4, loop_start
+        b loop_start
 
 
 
