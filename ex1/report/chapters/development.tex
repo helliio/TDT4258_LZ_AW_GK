@@ -27,13 +27,17 @@ GPIO .req r6
 ldr r6 =GPIO_BASE
 \end{minted}
 
-\subsection{Lighting the LEDs}
-The first course of action was to allow the program to control the LEDs.
-This allows for some rudimentary output, and is a nessesary first step to complete the assignment.
 
+\subsection{Clocking the GPIO controller}
 The EFM32GG has external controllers memory mapped.
 One of them is a GPIO-controller.
 At startup, to save power, the external controllers are not clocked.
 As such it is not possible to comunicate with the controller.
-Thus before the GPIO-controller can be configured, the CMU must be set to enable the HFPERCLK for the GPIO-controller.
+Before the GPIO-controller can be configured, the CMU must be set to enable the HFPERCLK for the GPIO-controller.
 This is done by setting bit 13 in the CMU\_HFPERCLKEN0 register.
+
+\begin{minted}{objdump}
+    ldr r1 [GPIO, #CMU_HFPERCLKEN0]
+    orr r1, #(1<<CMU_HFPERCLKEN0_GPIO)
+    str r1, [GPIO, #CMU_HFPERCLKEN0]
+\end{minted}
