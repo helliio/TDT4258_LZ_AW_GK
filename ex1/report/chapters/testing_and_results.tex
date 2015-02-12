@@ -1,11 +1,11 @@
 \section{Testing and results}
-No formal testing was preformed, The team conducted more of a trail and error kind of approach.
-The leds were tested first just to familiarise ourselves with the supplied code and the micro controller.
+No formal testing was preformed, the team conducted more of a trial-and-error kind of approach.
+The LEDs were tested first to familiarise ourselves with the supplied code and the microcontroller.
 
-After some testing with setting the led register and using lsl and lsr to left and right shift we were ready to implement the buttons.
+After some testing with setting the LED register and using lsl and lsr to left and right shift, we were ready to implement the buttons.
 
-The most intuitive method was used at first and did not use any interrupts and used a loop instead.
-A branch at the end of the code was used to loop back to a label we added in the code.
+The most intuitive method was used at first.
+Instead of using interrupts a loop was used instead.
 The button 7 and button 5 would left and right shift the row of lights, in other words the button 5 would fill up the bar from the right and the button 7 would empty it.
 The results are rather interesting in terms of power consumption compared to the test code from exercise-00.
 The power consumption was averaging at 3.42 mA while idling and looping. 
