@@ -153,61 +153,53 @@
         ldr r1, =0x802
         ldr r2, =ISER0
         str r1, [r2]
+        
+        
+        // == Loop the GPIO ==
+        
+        loop_start:
+        
+        ldr r0, =GPIO_BASE
+        ldr r1, =GPIO_PA_BASE
+                
+        ldr r2, [r0, GPIO_IF]
+        str r2, [r0, GPIO_IFC]
+            
+
+        mov r3, r2 // Handle SW7
+        and r3, r3, 0x40
+        cbz r3, button_7_not_pushed
+                
+        ldr r3, [r1, GPIO_DOUT]
+        mvn r3, r3
+        lsl r3, r3, 1
+        and r3, r3, 0xff00
+        mvn r3, r3
+        str r3, [r1, GPIO_DOUT]
+
+        button_7_not_pushed:
+            
+        mov r3, r2
+        and r3, r3, 0x10
+        cbz r3, button_5_not_pushed
+            
+        ldr r3, [r1, GPIO_DOUT]
+        mvn r3, r3
+        lsr r3, r3, 1
+        and r3, r3, 0xff00
+        mvn r3, r3
+        str r3, [r1, GPIO_DOUT]
+            
+        button_5_not_pushed:
+        
+        cbz 0, loop_start
+
 
 
         // == Setup complete ==
 
         // Wait for interrupt
         wfi
-
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    // GPIO handler
-    // The CPU will jump here when there is a GPIO interrupt
-    //
-    /////////////////////////////////////////////////////////////////////////////
-
-    .thumb_func
-    gpio_handler:
-        ldr r0, =GPIO_BASE
-        ldr r1, =GPIO_PA_BASE
-        
-    ldr r2, [r0, GPIO_IF]
-        str r2, [r0, GPIO_IFC]
-    
-
-    mov r3, r2 // Handle SW7
-    and r3, r3, 0x40
-    cbz r3, button_7_not_pushed
-        
-    ldr r3, [r1, GPIO_DOUT]
-    mvn r3, r3
-    lsl r3, r3, 1
-    and r3, r3, 0xff00
-    mvn r3, r3
-    str r3, [r1, GPIO_DOUT]
-
-    button_7_not_pushed:
-	
-    mov r3, r2
-    and r3, r3, 0x10
-    cbz r3, button_5_not_pushed
-    
-    ldr r3, [r1, GPIO_DOUT]
-    mvn r3, r3
-    lsr r3, r3, 1
-    and r3, r3, 0xff00
-    mvn r3, r3
-    str r3, [r1, GPIO_DOUT]
-    
-    button_5_not_pushed:
-
-
-    bx lr
-
-    /////////////////////////////////////////////////////////////////////////////
-
-
 	
     .thumb_func
     dummy_handler:
