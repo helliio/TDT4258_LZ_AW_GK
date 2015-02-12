@@ -1,5 +1,31 @@
 \section{Development}
 The development was carried out in natural stages of adding complexity.
+To understand what to do, the team read the recepie in the compendium, and looked up the registers used in the EFM32GG reference manual.
+
+\subsection{Aliasing Registers}
+The base addresses \texttt{GPIO\_PA}, \texttt{GPIO\_PC} and \texttt{GPIO\_BASE} were often used troughout the code.
+These constants had too high precision to be used as immediate values, so they needed to be loaded using a special form of the \texttt{LDR} instruction:
+
+\begin{minted}{objdump}
+ldr r4 =GPIO_PA
+\end{minted}
+
+This instruction will cause the assembler to place the constant in a \emph{literal pool} in the text section and emits a instruction to load from that.
+Dissasembling shows that the literal pool is at the very end of the program text, but this might have been different if the program were very long.
+
+To avoid having to do this load every time the constants are needed, both for convenience and optmizing for fewer instructions, the registers r4--r6 where allocated excusivly for these constants.
+This using the \texttt{.req} directive of the assembler convenient aliases for the registers were named:
+
+\begin{minted}{objdump}
+GPIO_I .req r4
+ldr r4 =GPIO_PC
+
+GPIO_O .req r5
+ldr r5 =GPIO_PA
+
+GPIO .req r6
+ldr r6 =GPIO_BASE
+\end{minted}
 
 \subsection{Lighting the LEDs}
 The first course of action was to allow the program to control the LEDs.
