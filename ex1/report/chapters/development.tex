@@ -98,3 +98,55 @@ loop:
     str r1, [GPIO_O, GPIO_DOUT]
     b loop
 \end{minted}
+
+
+\subsection{Interupts}
+The next step was to enable usage of interrupts.
+The hardware was peculiar in that for any given pin number, interupts can only come from one of the ports.
+This was because there were only 16 edge detectors, and each could source its input only from pins with the same number as itself.
+
+Set egde detectors 0--7 to source port C:
+\begin{minted}{objdump}
+    ldr r1, =0x22222222
+    str r1, [GPIO, GPIO_EXTIPSELL]
+\end{minted}
+
+Enable edge rise and fall detection on detectors 0--7:
+\begin{minted}{objdump}
+    ldr r1, =0x00ff
+    str r1, [GPIO, GPIO_EXTIRISE]
+    str r1, [GPIO, GPIO_EXTIFALL]
+    str r1, [GPIO, GPIO_IEN]
+\end{minted}
+
+Enable GPIO interrupt handlers in the microcontroller.
+Even numbered GPIO detectors use handler 1.
+Odd numbered use handler 11:
+\begin{minted}{objdump}
+    ldr r1, =ISER0
+    ldr r2, =(1<<1 + 1<<11)
+    str r2, [r1]
+\end{minted}
+
+Note that it was not nessesary to bitwise-or the register with the bits to be set because the writing to the Interrupt Set Enable Register did that automatically like other \emph{set}-registers.
+
+At this point, \texttt{gpio\_handler} was called whenever the detectors trigger.
+There was some confusion as the interrupt was triggered after startup, without any buttons beeing pressed.\todo{debug this}
+
+At the end of the setup phase, a busy loop was inserted:
+\begin{minted}{objdump}
+    b .
+\end{minted}
+
+Plumbing was added to \texttt{gpio\_handler}:
+The interrupt flags needed to cleared to signal that they have been handled.
+\begin{minted}{objdump}
+    ldr r1, [GPIO_I, GPIO_IF]
+    str r1, [GPIO_I, GPIO_IFC]
+\end{minted}
+
+To return from the handler, the code jumps to a special EXC\_RETURN value stored in the \emph{lr} register:
+
+\begin{minted}{objdump}
+    bx lr
+\end{minted}
