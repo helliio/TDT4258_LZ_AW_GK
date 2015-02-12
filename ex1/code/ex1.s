@@ -192,7 +192,7 @@
             
         button_5_not_pushed:
         
-        ldr r4, =0x00
+        ldr r4, =0
         cbz r4, loop_start
 
 
