@@ -87,8 +87,7 @@ Set mode of pins 0--7 to input with pull and glich filter enabled:
 \end{minted}
 
 At this point, input could be read of off GPIO\_PA\_DIN.
-This was tested in the debugger:
-\todo{Show steps}
+This was tested in the debugger.
 
 Then the input was shown on the LEDs.
 The left shift maps the inputs on pins 0--7 to the outputs on 8--15:
@@ -132,7 +131,7 @@ Odd numbered use handler 11:
 Note that it was not nessesary to bitwise-or the register with the bits to be set because the writing to the Interrupt Set Enable Register did that automatically like other \emph{set}-registers.
 
 At this point, \texttt{gpio\_handler} was called whenever the detectors trigger.
-There was some confusion as the interrupt was triggered after startup, without any buttons beeing pressed.\todo{debug this}
+There was some confusion as the interrupt was triggered after startup, without any buttons beeing pressed.
 
 At the end of the setup phase, a busy loop was inserted:
 \begin{minted}{objdump}
