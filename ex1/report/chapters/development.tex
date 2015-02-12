@@ -150,3 +150,35 @@ To return from the handler, the code jumps to a special EXC\_RETURN value stored
 \begin{minted}{objdump}
     bx lr
 \end{minted}
+
+
+\subsection{Sleeping}
+The EFM32GG supports four sleep modes: sleep (EM1), deep sleep (EM2), stop (EM3), shutoff (EM4).
+The instructions in the compendium use the deep sleep mode.
+In this mode the microcontroller already uses very little power.
+According to the reference manual ``as litte as \SI{1.1}{\micro\ampere} with RTC enabled'', and in this excercise, the RTC was not used.
+It was to be expected that the GPIO controller would draw a litte power as well.
+
+Since all work after setup was done in the gpio interrupt handler, another feature of the microcontroller was enabled: sleep on exit, which will put the microcontroller to sleep as soon as handling of interrupts is done.
+
+Deep sleep mode and sleep on exit was enabled in the System Control Register:
+\begin{minted}{objdump}
+    ldr r1 =( 1<<1 | 1<<2 )
+    ldr r2 =SCR
+    str r1, [r2]
+\end{minted}
+
+The idle loop in the reset handler was enchanced with a wait for interrupt instruction.
+\begin{minted}{objdump}
+    wfi
+    b .-1
+\end{minted}
+
+The reference manual states that spurious wakeups can occur, so there is still need for a loop (even with sleep on exit enabled).
+Indeed when the debugger was connected and stepping, the \texttt{wfi} instruction completed.
+
+There was a posibility of saving more power by entering the shutoff energy mode.
+The referece manual stated that it was possible to trigger wake up from up to six of any GPIO pins, and the GPIOs could retain their outputs.
+This was not quite the eight that were used for the gamepad, but it could be adapted with extra hardware, such as eigth diodes to detect if any of the buttons are pressed.
+The microcontroller could go to shutoff if none are pressed, as it's likely there will be at least half a second of ideling, otherwise it would deep sleep.
+This is about the time the microcontroller has to spend in shutoff for the power usage to be less than in deep sleep.
