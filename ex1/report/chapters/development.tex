@@ -92,7 +92,7 @@ This was tested in the debugger:
 Then the input was shown on the LEDs.
 The left shift maps the inputs on pins 0--7 to the outputs on 8--15:
 \begin{minted}{objdump}
-loop:
+loop$
     ldr r1, [GPIO_I, GPIO_DIN]
     lsl r1, r1, #8
     str r1, [GPIO_O, GPIO_DOUT]
