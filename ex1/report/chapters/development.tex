@@ -1,0 +1,185 @@
+\section{Development}
+The development was carried out in natural stages of adding complexity.
+To understand what to do, the team read the recepie in the compendium, and looked up the registers used in the EFM32GG reference manual.
+
+\subsection{Aliasing Registers}
+The base addresses \texttt{GPIO\_PA}, \texttt{GPIO\_PC} and \texttt{GPIO\_BASE} were often used troughout the code.
+These constants had too high precision to be used as immediate values, so they needed to be loaded using a special form of the \texttt{LDR} instruction:
+
+\begin{minted}{objdump}
+ldr r4 =GPIO_PA
+\end{minted}
+
+This instruction will cause the assembler to place the constant in a \emph{literal pool} in the text section and emits a instruction to load from that.
+Dissasembling shows that the literal pool is at the very end of the program text, but this might have been different if the program were very long.
+
+To avoid having to do this load every time the constants are needed, both for convenience and optmizing for fewer instructions, the registers r4--r6 where allocated excusivly for these constants.
+This using the \texttt{.req} directive of the assembler convenient aliases for the registers were named:
+
+\begin{minted}{objdump}
+GPIO_I .req r4
+ldr GPIO_I, =GPIO_PC
+
+GPIO_O .req r5
+ldr GPIO_O, =GPIO_PA
+
+GPIO .req r6
+ldr GPIO, =GPIO_BASE
+\end{minted}
+
+
+\subsection{Clocking the GPIO controller}
+The EFM32GG has external controllers memory mapped.
+One of them is a GPIO-controller.
+At startup, to save power, the external controllers are not clocked.
+As such it is not possible to comunicate with the controller.
+Before the GPIO-controller can be configured, the CMU must be set to enable the HFPERCLK for the GPIO-controller.
+This is done by setting bit 13 in the CMU\_HFPERCLKEN0 register.
+
+\begin{minted}{objdump}
+    ldr r2, =CMU_BASE
+    ldr r1, [r2, #CMU_HFPERCLKEN0]
+    orr r1, #( 1<< CMU_HFPERCLKEN0_GPIO )
+    str r1, [r2, #CMU_HFPERCLKEN0]
+\end{minted}
+
+
+\subsection{Lighting the LEDs}
+The first course of action was to allow the program to control the LEDs.
+This allows for some rudimentary output, and is a nessesary first step to complete the assignment.
+The folowing configuration was used for port C:
+
+Set the alternative drive strength to \SI{2}{\milli\ampere}:
+\begin{minted}{objdump}
+    ldr r1, =0x3
+    str r1, [GPIO_O, GPIO_CTRL]
+\end{minted}
+
+Set the mode of pins 8--15 to push-pull (output) with alternative drive strength:
+\begin{minted}{objdump}
+    ldr r1, =0x55555555
+    str r1, [GPIO_O, GPIO_MODEH]
+\end{minted}
+
+Turn off a pattern of the LEDs by setting outputs of even pins 8--15 to high:
+\begin{minted}{objdump}
+    ldr r1, =0xaa00
+    str r1, [GPIO_O, GPIO_DOUT]
+\end{minted}
+
+This produced the expected pattern on the ligths.
+
+
+\subsection{Reading input}
+The next step was to show which buttons are pressed using the lights.
+To do that input was configured on port A pins 0--7 with pull-ups.
+
+Set pull direction of pins 0--7 to up:
+\begin{minted}{objdump}
+    ldr r1, =0x00ff
+    str r1, [GPIO_I, GPIO_DOUT]
+\end{minted}
+
+Set mode of pins 0--7 to input with pull and glich filter enabled:
+\begin{minted}{objdump}
+    ldr r1, =0x33333333
+    str r1, [GPIO_I, GPIO_MODEL]
+\end{minted}
+
+At this point, input could be read of off GPIO\_PA\_DIN.
+This was tested in the debugger:
+\todo{Show steps}
+
+Then the input was shown on the LEDs.
+The left shift maps the inputs on pins 0--7 to the outputs on 8--15:
+\begin{minted}{objdump}
+loop:
+    ldr r1, [GPIO_I, GPIO_DIN]
+    lsl r1, r1, #8
+    str r1, [GPIO_O, GPIO_DOUT]
+    b loop
+\end{minted}
+
+
+\subsection{Interupts}
+The next step was to enable usage of interrupts.
+The hardware was peculiar in that for any given pin number, interupts can only come from one of the ports.
+This was because there were only 16 edge detectors, and each could source its input only from pins with the same number as itself.
+
+Set egde detectors 0--7 to source port C:
+\begin{minted}{objdump}
+    ldr r1, =0x22222222
+    str r1, [GPIO, GPIO_EXTIPSELL]
+\end{minted}
+
+Enable edge rise and fall detection on detectors 0--7:
+\begin{minted}{objdump}
+    ldr r1, =0x00ff
+    str r1, [GPIO, GPIO_EXTIRISE]
+    str r1, [GPIO, GPIO_EXTIFALL]
+    str r1, [GPIO, GPIO_IEN]
+\end{minted}
+
+Enable GPIO interrupt handlers in the microcontroller.
+Even numbered GPIO detectors use handler 1.
+Odd numbered use handler 11:
+\begin{minted}{objdump}
+    ldr r1, =( 1<< 1 | 1<< 11 )
+    ldr r2, =ISER0
+    str r1, [r2]
+\end{minted}
+
+Note that it was not nessesary to bitwise-or the register with the bits to be set because the writing to the Interrupt Set Enable Register did that automatically like other \emph{set}-registers.
+
+At this point, \texttt{gpio\_handler} was called whenever the detectors trigger.
+There was some confusion as the interrupt was triggered after startup, without any buttons beeing pressed.\todo{debug this}
+
+At the end of the setup phase, a busy loop was inserted:
+\begin{minted}{objdump}
+    b .
+\end{minted}
+
+Plumbing was added to \texttt{gpio\_handler}:
+The interrupt flags needed to cleared to signal that they have been handled.
+\begin{minted}{objdump}
+    ldr r1, [GPIO_I, GPIO_IF]
+    str r1, [GPIO_I, GPIO_IFC]
+\end{minted}
+
+To return from the handler, the code jumps to a special EXC\_RETURN value stored in the \emph{lr} register:
+
+\begin{minted}{objdump}
+    bx lr
+\end{minted}
+
+
+\subsection{Sleeping}
+The EFM32GG supports four sleep modes: sleep (EM1), deep sleep (EM2), stop (EM3), shutoff (EM4).
+The instructions in the compendium use the deep sleep mode.
+In this mode the microcontroller already uses very little power.
+According to the reference manual ``as litte as \SI{1.1}{\micro\ampere} with RTC enabled'', and in this excercise, the RTC was not used.
+It was to be expected that the GPIO controller would draw a litte power as well.
+
+Since all work after setup was done in the gpio interrupt handler, another feature of the microcontroller was enabled: sleep on exit, which will put the microcontroller to sleep as soon as handling of interrupts is done.
+
+Deep sleep mode and sleep on exit was enabled in the System Control Register:
+\begin{minted}{objdump}
+    ldr r1, =( 1<< 1 | 1<< 2 )
+    ldr r2, =SC,R
+    str r1, [r2]
+\end{minted}
+
+The idle loop in the reset handler was enchanced with a wait for interrupt instruction.
+\begin{minted}{objdump}
+    wfi
+    b .-1
+\end{minted}
+
+The reference manual states that spurious wakeups can occur, so there is still need for a loop (even with sleep on exit enabled).
+Indeed when the debugger was connected and stepping, the \texttt{wfi} instruction completed.
+
+There was a posibility of saving more power by entering the shutoff energy mode.
+The referece manual stated that it was possible to trigger wake up from up to six of any GPIO pins, and the GPIOs could retain their outputs.
+This was not quite the eight that were used for the gamepad, but it could be adapted with extra hardware, such as eigth diodes to detect if any of the buttons are pressed.
+The microcontroller could go to shutoff if none are pressed, as it's likely there will be at least half a second of ideling, otherwise it would deep sleep.
+This is about the time the microcontroller has to spend in shutoff for the power usage to be less than in deep sleep.

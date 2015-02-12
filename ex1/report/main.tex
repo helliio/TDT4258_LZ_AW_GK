@@ -1,0 +1,43 @@
+\documentclass[a4,journal,twoside]{IEEEtran}
+\usepackage{blindtext}
+\usepackage{graphicx}
+\usepackage{subfiles}
+\usepackage[detect-all]{siunitx}
+\usepackage{minted}
+\usepackage{todonotes}
+
+\title{
+    \textsc{Saving Energy on ARM Cortex-M3}\\
+    Exercise 1 in TDT4258
+}
+
+\author{
+    Aleksander~\textsc{Wasaznik},
+    Geir~\textsc{Kulia},
+    Liang~\textsc{Zhu}
+}
+
+\markboth{Exercise 1, TDT4258 Energy Efficient Computer Systems}{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    For the purpose of familiarizing the team with low level programming of the microcontroller used during the course, a simple assembly program was written in ARM Thumb 2 assembly for the ARM Cortex-M3 microcontroller on a EFM32GG DK3750 board.
+    The program controlled a series of LEDs using gamepad buttons.
+    The usage of power-saving features of the microcontroller were iterativly introduced to the program.
+    The development board facilitated taking power measurments between each step.
+    The resulting solution makes full use of the deep sleep feature of the microcontroller to enable maximum power efficiency with the given hardware.
+\end{abstract}
+
+% Chapters go here.
+\subfile{chapters/introduction.tex}
+\subfile{chapters/hardware.tex}
+\subfile{chapters/handouts.tex}
+\subfile{chapters/development.tex}
+\subfile{chapters/discussion.tex}
+
+\subfile{bibliography.tex}
+
+\end{document}

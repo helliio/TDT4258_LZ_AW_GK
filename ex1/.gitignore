@@ -1,11 +1,3 @@
-### Unwanted outputs ###
-*.pdf
-
-### Assemby compilation ###
-*.bin
-*.elf
-*.o
-
 ### LaTeX ###
 *.acn
 *.acr
@@ -102,4 +94,3 @@ $RECYCLE.BIN/
 Session.vim
 .netrwhist
 *~
-
