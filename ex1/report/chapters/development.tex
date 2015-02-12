@@ -41,3 +41,29 @@ This is done by setting bit 13 in the CMU\_HFPERCLKEN0 register.
     orr r1, #(1<<CMU_HFPERCLKEN0_GPIO)
     str r1, [GPIO, #CMU_HFPERCLKEN0]
 \end{minted}
+
+
+\subsection{Lighting the LEDs}
+The first course of action was to allow the program to control the LEDs.
+This allows for some rudimentary output, and is a nessesary first step to complete the assignment.
+The folowing configuration was used for port C:
+
+Set the alternative drive strength to \SI{2}{\milli\ampere}:
+\begin{minted}{objdump}
+    ldr r1, =0x3
+    str r1, [GPIO_O, GPIO_CTRL]
+\end{minted}
+
+Set the mode of pins 8--15 to push-pull (output) with alternative drive strength:
+\begin{minted}{objdump}
+    ldr r1, =0x55555555
+    str r1, [GPIO_O, GPIO_MODEH]
+\end{minted}
+
+Turn off a pattern of the LEDs by setting outputs of even pins 8--15 to high:
+\begin{minted}{objdump}
+    ldr r1, =0xaa00
+    str r1, [GPIO_O, GPIO_DOUT]
+\end{minted}
+
+This produced the expected pattern on the ligths.
