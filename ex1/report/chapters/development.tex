@@ -123,9 +123,9 @@ Enable GPIO interrupt handlers in the microcontroller.
 Even numbered GPIO detectors use handler 1.
 Odd numbered use handler 11:
 \begin{minted}{objdump}
-    ldr r1, =ISER0
-    ldr r2, =(1<<1 | 1<<11)
-    str r2, [r1]
+    ldr r1, =( 1<<1 | 1<<11 )
+    ldr r2, =ISER0
+    str r1, [r2]
 \end{minted}
 
 Note that it was not nessesary to bitwise-or the register with the bits to be set because the writing to the Interrupt Set Enable Register did that automatically like other \emph{set}-registers.
