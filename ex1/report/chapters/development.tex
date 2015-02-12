@@ -18,13 +18,13 @@ This using the \texttt{.req} directive of the assembler convenient aliases for t
 
 \begin{minted}{objdump}
 GPIO_I .req r4
-ldr r4 =GPIO_PC
+ldr GPIO_I =GPIO_PC
 
 GPIO_O .req r5
-ldr r5 =GPIO_PA
+ldr GPIO_O =GPIO_PA
 
 GPIO .req r6
-ldr r6 =GPIO_BASE
+ldr GPIO =GPIO_BASE
 \end{minted}
 
 
