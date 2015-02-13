@@ -112,8 +112,7 @@
 
         // Note that DOUT is active low.
         // Make sure the pins are GND to begin with.
-        mov r2, 0xff00
-        str r2, [r1, GPIO_DOUT]
+        mov r2, 0xfe00
 
 
         // == Setup inputs on port C ==
@@ -135,7 +134,6 @@
 
         // Enable interupt generation on both rise and fall.
         mov r2, 0xff
-        str r2, [r1, GPIO_EXTIRISE]
         str r2, [r1, GPIO_EXTIFALL]
         str r2, [r1, GPIO_IEN]
 
@@ -173,20 +171,44 @@
     gpio_handler:
         ldr r0, =GPIO_BASE
         ldr r1, =GPIO_PA_BASE
-
-        ldr r2, [r0, GPIO_IF]
-
-        // Clear interupt flag
+        
+    ldr r2, [r0, GPIO_IF]
         str r2, [r0, GPIO_IFC]
+    
 
-        // Copy the interupt flag to the led outputs.
-        lsl r2, 8
-        str r2, [r1, GPIO_DOUT]
+    mov r3, r2 // Handle SW7
+    and r3, r3, 0x40
+    cbz r3, button_7_not_pushed
+        
+    ldr r3, [r1, GPIO_DOUT]
+    mvn r3, r3
+    lsl r3, r3, 1
+    and r3, r3, 0xff00
+    mvn r3, r3
+    str r3, [r1, GPIO_DOUT]
 
-        bx lr
+    button_7_not_pushed:
+	
+    mov r3, r2
+    and r3, r3, 0x10
+    cbz r3, button_5_not_pushed
+    
+    ldr r3, [r1, GPIO_DOUT]
+    mvn r3, r3
+    lsr r3, r3, 1
+    and r3, r3, 0xff00
+    mvn r3, r3
+    str r3, [r1, GPIO_DOUT]
+    
+    button_5_not_pushed:
+
+
+    bx lr
 
     /////////////////////////////////////////////////////////////////////////////
 
+
+	
     .thumb_func
     dummy_handler:
         b .  // do nothing
