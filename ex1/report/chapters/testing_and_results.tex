@@ -1,24 +1,14 @@
 \section{Testing and results}
-No formal testing was preformed, the team conducted more of a trial-and-error kind of approach.
-The LEDs were tested first to familiarise ourselves with the supplied code and the microcontroller.
+No formal testing was preformed as the code was clear and it was easy to maintain control over what the code did.
+Ad-hoc testing was conducted when applicable to supplement this.
+To familiarize our selves with the supplied code, the LED were tested with a simple example.
 
-After some testing with setting the LED register and using lsl and lsr to left and right shift, we were ready to implement the buttons.
-
-The most intuitive method was used at first.
-Instead of using interrupts a loop was used instead.
-The button 7 and button 5 would left and right shift the row of lights, in other words the button 5 would fill up the bar from the right and the button 7 would empty it.
-The results are rather interesting in terms of power consumption compared to the test code from exercise-00.
-The power consumption was averaging at 3.42 mA while idling and looping. 
-The power consumption while listening for buttons was at 3.59 mA.
-A button press increased the power consumption by 0.04 mA.
-
-Next it is the time to implement the code with interrupts.
-The code was modified so that instead of looping we would use the gpio handler.
-The first test was idle power consumption without any sleep, the results were at 3.44 mA.
-The second test was with normal sleep.
-The power consumption was at 1.25 mA.
-The last test was preformed with deep sleep.
-The power consumption was at 1.7 uA with none of the leds on and 3.8 uA with all the leds on.
-
-The results looked much more promising.
-This was much much more power efficient than the looping.
+To mesure difference in energy efficiency a loop was implemented at first. 
+This loop was then used to control the GPIO inputs. Later, the same task was implemented using interupts.
+The results are rather interesting in terms of power consumption compared to the test code from exercise-0.
+The power consuption had an avarage of 3.59 mA while using only looping without interupts. 
+When using interupt for the GPIO handler without using any sleep modes, the power consuption fell by around 4 \% to 3.44 mA.
+To reduce the power consuption further normal sleep was introduced. The result of this was as little as 1.25 mA, or down 64 \%.
+The last test was preformed with deep sleep. The power consumption was then at 1.7 $\my$A. 
+This illustrates how much relative power that can be saved. 
+As this was a simple demo there wasn't any obvious disadvantages by using deepsleep while the benefits was enourmous.
