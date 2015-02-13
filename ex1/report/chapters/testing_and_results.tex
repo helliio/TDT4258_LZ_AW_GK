@@ -1,0 +1,15 @@
+\section{Testing and results}
+No formal testing was preformed as the code was clear and it was easy to maintain control over what the code did.
+Ad-hoc testing was conducted when applicable to supplement this.
+
+To establish a baseline for energy usage, a simple branch-to-self looping program was used.
+The loop was modified to reflect the buttons pressed on the LEDs.
+In another interation, the code was modified to use interupts.
+The power consuption had an avarage of \SI{3.59}{\milli\ampere} while using only looping without interupts. 
+When using interupt for the GPIO handler without using any sleep modes, the power consuption fell by around 4\% to \SI{3.44}{\milli\ampere}.
+To reduce the power consuption further normal sleep was introduced.
+The result of this was as little as \SI{1.25}{\milli\ampere}, or down another 64\%.
+The last test was preformed with deep sleep.
+The power consumption was then at \SI{1.7}{\micro\ampere}.
+A great reduction.
+As this was a simple demo there wasn't any obvious disadvantages by using deepsleep while the benefits was enourmous.
