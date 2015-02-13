@@ -13,10 +13,10 @@ ldr r4 =GPIO_PA
 \end{minted}
 
 This instruction will cause the assembler to place the constant in a \emph{literal pool} in the text section and emits a instruction to load from that.
-Dissasembling shows that the literal pool is at the very end of the program text, but this might have been different if the program were very long.
+Dissasembling showed that the literal pool is at the very end of the program text, but this might have been different if the program was very long.
 
-To avoid having to do this load every time the constants are needed, both for convenience and optmizing for fewer instructions, the registers r4--r6 where allocated excusivly for these constants.
-This using the \texttt{.req} directive of the assembler convenient aliases for the registers were named:
+To avoid having to do this load every time the constants are needed, both for convenience and optmizing for fewer instructions, the registers r4--r6 where allocated exclusively for these constants.
+Using the \texttt{.req} directive of the assembler convenient aliases for the registers were named:
 
 \begin{minted}{objdump}
 GPIO_I .req r4
@@ -30,7 +30,7 @@ ldr GPIO, =GPIO_BASE
 \end{minted}
 
 
-\subsection{Clocking the GPIO controller}
+\subsection{Clocking the GPIO Controller}
 The EFM32GG has external controllers memory mapped.
 One of them is a GPIO-controller.
 At startup, to save power, the external controllers are not clocked.
@@ -47,7 +47,7 @@ This is done by setting bit 13 in the CMU\_HFPERCLKEN0 register.
 
 
 \subsection{Lighting the LEDs}
-The first course of action was to allow the program to control the LEDs.
+The first course of action was to make the program control the LEDs.
 This allows for some rudimentary output, and is a nessesary first step to complete the assignment.
 The folowing configuration was used for port C:
 
@@ -157,16 +157,16 @@ To return from the handler, the code jumps to a special EXC\_RETURN value stored
 \subsection{Sleeping}
 The EFM32GG supports four sleep modes: sleep (EM1), deep sleep (EM2), stop (EM3), shutoff (EM4).
 The instructions in the compendium use the deep sleep mode.
-In this mode the microcontroller already uses very little power.
+In this mode the microcontroller uses very little power.
 According to the reference manual ``as litte as \SI{1.1}{\micro\ampere} with RTC enabled'', and in this excercise, the RTC was not used.
 It was to be expected that the GPIO controller would draw a litte power as well.
 
-Since all work after setup was done in the gpio interrupt handler, another feature of the microcontroller was enabled: sleep on exit, which will put the microcontroller to sleep as soon as handling of interrupts is done.
+Since all work after setup was done in the GPIO interrupt handler, another feature of the microcontroller was enabled: sleep on exit, which will put the microcontroller to sleep as soon as handling of interrupts is done.
 
 Deep sleep mode and sleep on exit was enabled in the System Control Register:
 \begin{minted}{objdump}
     ldr r1, =( 1<< 1 | 1<< 2 )
-    ldr r2, =SC,R
+    ldr r2, =SCR
     str r1, [r2]
 \end{minted}
 
@@ -183,7 +183,7 @@ There was a posibility of saving more power by entering the shutoff energy mode.
 The referece manual stated that it was possible to trigger wake up from up to six of any GPIO pins, and the GPIOs could retain their outputs.
 This was not quite the eight that were used for the gamepad, but it could be adapted with extra hardware, such as eigth diodes to detect if any of the buttons are pressed.
 The microcontroller could go to shutoff if none are pressed, as it's likely there will be at least half a second of ideling, otherwise it would deep sleep.
-This is about the time the microcontroller has to spend in shutoff for the power usage to be less than in deep sleep.
+Half a second is about the time the microcontroller has to spend in shutoff for the power usage to be less than in deep sleep.
 
 
 \subsection{Demonstration}
@@ -191,23 +191,23 @@ As an extra learning exercise for the team, a small demo was implemented. After 
 
 The first demo flashed the light representing the button pushed. This was achived by shifting GPIO\_IFC by 8 so the button pushed now represented which LED that should light up. Then it was stored to GPIO\_DOUT.
 
-\begin{lstlisting}[frame=single]
+\begin{minted}{objdump}
 ldr r2, [r0, GPIO_IF]
 lsl r2, 8
 str r2, [r1, GPIO_DOUT]
-\end{lstlisting}
+\end{minted}
 
 After this solution was tested, a more complex demo was developed. It showed a bar that could be increased or decreased based on input from two of the buttons. This solution branched if a button was pushed by masking the desired button. As an example, for the gamepad button SW7 a mask was made to disable all other input signal when checking. For SW7, the mask 0x40 was used. If $0 \neq \text{GPIO\_IF} \wedge \text{0x40}$ then the code meant to be trigged by the input on SW7 would run. If not, it would branch over it.
 
 If SW7 was pushed, the bar was supposed to move to the left. Shifting GPIO\_DOUT by one did this. Then the result of this was masked with 0xff00 to make sure that the LEDs doesnt under or overflow. The formula for the expression was $\overline{ (\overline{\text{GPIO\_DOUT}} \ll 1) \wedge \text{0xff00} }$. We used this expression instead of a simpler one to maintain code readability.
 
 When implementing the expression above the following code was used.
-\begin{lstlisting}[frame=single]
+\begin{minted}{objdump}
 mvn r3, r3
 lsl r3, r3, 1
 and r3, r3, 0xff00
 mvn r3, r3
 str r3, [r1, GPIO_DOUT]
-\end{lstlisting}
+\end{minted}
 
 The command mvn was used to invert the register.
