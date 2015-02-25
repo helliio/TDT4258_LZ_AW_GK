@@ -10,7 +10,7 @@
   registers are 16 bits.
 */
 /* The period between sound samples, in clock cycles */
-#define   SAMPLE_PERIOD   0
+#define   SAMPLE_PERIOD   450
 
 /* Declaration of peripheral setup functions */
 void setupTimer(uint32_t period);
@@ -38,8 +38,10 @@ int main(void)
 
 void setupNVIC()
 {
-    ISER0 = 0x1802;
-  /* TODO use the NVIC ISERx registers to enable handling of interrupt(s)
+    *ISER0 |= 1<<1;
+    *ISER0 |= 1<<11;
+    *ISER0 |= 1<<12;   
+    /* TODO use the NVIC ISERx registers to enable handling of interrupt(s)
      remember two things are necessary for interrupt handling:
       - the peripheral must generate an interrupt signal
       - the NVIC must be configured to make the CPU handle the signal
