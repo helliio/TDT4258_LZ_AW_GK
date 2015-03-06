@@ -2,41 +2,35 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
-#include "values.h"
-#include "drum_sound.h"
+#include "sound.h"
 
-int sound = 0;
-int sound_value = 0;
+
 void interrupt_handler();
 /* TIMER1 interrupt handler */
 
 
+int base_sample_period = 2500;
+int sample_period = 2500;
 
-int i = 0;
-int button_pushed = -1;
+bool trigger_sound = false;
 
-int * sound_sample_left;
+void display_power_bar()
+{
+    
+    * GPIO_PA_DOUT = 0x7f00 >> ( (* DAC0_CH1DATA - 0x0c7) * 8 / (0xf3B - 0x0c7) );
+
+}
 
 void __attribute__ ((interrupt)) TIMER1_IRQHandler() 
 {  
 
     *TIMER1_IFC = 1; 
-
-    if (button_pushed == 7)
+    if (trigger_sound)
     {
-       play_drum_sound(); 
-    }
-    else
-    {
-        sound = 0;
+       play_piano_sound(); 
     }
 
     display_power_bar();
-}
-
-void display_power_bar()
-{
-     * GPIO_PA_DOUT = 0xff00 >> (sound * 8 / 0xfff);
 }
 
 /* GPIO even pin interrupt handler */
@@ -55,29 +49,56 @@ void interrupt_handler(){
 
     * GPIO_IFC = 0xff;
 
-    uint32_t input = *GPIO_PC_DIN;
-    uint32_t sw7 = input & 0x40;
-    uint32_t sw5 = input & 0x10;
-    if (sw7 == 0){
-        button_pushed = 7; 
-    }
+    uint32_t gipi_button_pushed = *GPIO_PC_DIN;
+    
+    uint32_t sw1 = gipi_button_pushed & 0x01;
+    uint32_t sw2 = gipi_button_pushed & 0x02;
+    uint32_t sw3 = gipi_button_pushed & 0x04;
+    uint32_t sw4 = gipi_button_pushed & 0x08;
+    uint32_t sw5 = gipi_button_pushed & 0x10;
+    uint32_t sw6 = gipi_button_pushed & 0x20;
+    uint32_t sw7 = gipi_button_pushed & 0x40;
+    uint32_t sw8 = gipi_button_pushed & 0x80;
 
-    // * GPIO_PA_DOUT =  * GPIO_PA_DOUT << 8;
-}
+    trigger_sound = true;
+    piano_position = 0;
 
-void play_drum_sound()
-{
-    sound = drum_sound[i];
-    i++;
+    enum TONE tone;
 
-    *DAC0_CH0DATA = sound;
-    *DAC0_CH1DATA = sound;
-
-
-    if (i >= lenght_of_drum_sound)
+    if (sw1 == 0)
     {
-        button_pushed = -1;
-        i = 0;
+        tone = C;
+    }
+    else if (sw2 == 0)
+    {
+        tone = D;
+    }
+    else if (sw3 == 0)
+    {
+        tone = E;
+    }
+    else if (sw4 == 0)
+    {
+        tone = F;
+    }
+    else if (sw5 == 0)
+    {
+        tone = G;
+    }
+    else if (sw6 == 0)
+    {
+        tone = A;
+    }
+    else if (sw7 == 0)
+    {
+        tone = B;
+    }
+    else if (sw8 == 0)
+    {
+        tone = C2;
     }
 
+    set_tone(tone);
 }
+
+

@@ -2,6 +2,7 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
+#include "sound.h"
 
 /* 
   TODO calculate the appropriate sample period for the sound wave(s) 
@@ -10,7 +11,7 @@
   registers are 16 bits.
 */
 /* The period between sound samples, in clock cycles */
-#define   SAMPLE_PERIOD 1000
+#define   SAMPLE_PERIOD 2500
 
 /* Declaration of peripheral setup functions */
 void setupTimer(uint32_t period);
@@ -20,27 +21,32 @@ void setupNVIC();
 /* Your code will start executing here */
 int main(void) 
 {  
-  /* Call the peripheral setup functions */
-  setupGPIO();
-  setupDAC();
-  setupTimer(SAMPLE_PERIOD);
-  
-  /* Enable interrupt handling */
-  setupNVIC();
-  
-  /* TODO for higher energy efficiency, sleep while waiting for interrupts
-     instead of infinite loop for busy-waiting
-  */
-  while(1);
+    /* Call the peripheral setup functions */
 
-  return 0;
+    setupDAC();
+    setupTimer(SAMPLE_PERIOD);
+
+    /* Enable interrupt handling */
+    setupNVIC();
+
+    /* TODO for higher energy efficiency, sleep while waiting for interrupts
+       instead of infinite loop for busy-waiting
+    */
+
+    setupGPIO();
+    
+    lisa_gikk_til_skolen();
+
+    
+    while(1);
+    return 0;
 }
 
 void setupNVIC()
 {
-    *ISER0 |= 1<<1;
-    *ISER0 |= 1<<11;
-    *ISER0 |= 1<<12;   
+    * ISER0 |= 1<<1;
+    * ISER0 |= 1<<11;
+    * ISER0 |= 1<<12;   
     /* TODO use the NVIC ISERx registers to enable handling of interrupt(s)
      remember two things are necessary for interrupt handling:
       - the peripheral must generate an interrupt signal
@@ -49,6 +55,9 @@ void setupNVIC()
      assignment.
   */
 }
+
+/*
+
 
 /* if other interrupt handlers are needed, use the following names: 
    NMI_Handler

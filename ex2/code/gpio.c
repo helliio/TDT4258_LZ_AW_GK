@@ -6,10 +6,6 @@
 /* function to set up GPIO mode and interrupts*/
 void setupGPIO()
 {
-    
-    
-    /* TODO set input and output pins for the joystick */
-    
     /* Example of HW access from C code: turn on joystick LEDs D4-D8
      check efm32gg.h for other useful register definitions
     */
@@ -20,7 +16,7 @@ void setupGPIO()
     *GPIO_PC_MODEL = 0x33333333;
     *GPIO_PC_DOUT = 0xff;
     *GPIO_EXTIPSELL = 0x22222222;
-    *GPIO_EXTIRISE = 0xff;
+    // *GPIO_EXTIRISE = 0xff;
     *GPIO_EXTIFALL = 0xff;
     *GPIO_IEN = 0xff;
 }
