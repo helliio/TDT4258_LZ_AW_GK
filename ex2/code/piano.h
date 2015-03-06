@@ -2,8 +2,8 @@
 
 // Table containing samples of a piano tone generated using MATLAB
 
-const int lenght_of_piano = 11748;
-const int const piano[11748] = 
+const int       lenght_of_piano = 11748;
+const int const piano[11748]    = 
 {   
     0x800,     0x7ff,     0x7ff,     0x7fe, 
     0x7fe,     0x7fd,     0x7fd,     0x7fc, 

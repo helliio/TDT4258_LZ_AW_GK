@@ -39,10 +39,11 @@ void lisa_gikk_til_skolen(void)
 void play_tone(int tone)
 {	
 	// Play a tone based on the enum type tone
-	
+
 	set_tone(tone);
 
 	trigger_sound = true;
+	
 	while(trigger_sound);
 }
 

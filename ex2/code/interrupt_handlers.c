@@ -4,33 +4,18 @@
 #include "efm32gg.h"
 #include "sound.h"
 
-
 void interrupt_handler();
 /* TIMER1 interrupt handler */
 
+int     base_sample_period  = 2500;
+int     sample_period       = 2500;
+bool    trigger_sound       = false;
 
-int base_sample_period = 2500;
-int sample_period = 2500;
-
-bool trigger_sound = false;
-
-void display_power_bar()
-{
-    
-    * GPIO_PA_DOUT = 0x7f00 >> ( (* DAC0_CH1DATA - 0x0c7) * 8 / (0xf3B - 0x0c7) );
-
-}
 
 void __attribute__ ((interrupt)) TIMER1_IRQHandler() 
 {  
-
     *TIMER1_IFC = 1; 
-    if (trigger_sound)
-    {
-       play_piano_sound(); 
-    }
-
-    display_power_bar();
+    if (trigger_sound) play_piano_sound(); 
 }
 
 /* GPIO even pin interrupt handler */
@@ -51,6 +36,7 @@ void interrupt_handler(){
 
     uint32_t gipi_button_pushed = *GPIO_PC_DIN;
     
+    // Mask to see if a button is pushed
     uint32_t sw1 = gipi_button_pushed & 0x01;
     uint32_t sw2 = gipi_button_pushed & 0x02;
     uint32_t sw3 = gipi_button_pushed & 0x04;
@@ -65,38 +51,14 @@ void interrupt_handler(){
 
     enum TONE tone;
 
-    if (sw1 == 0)
-    {
-        tone = C;
-    }
-    else if (sw2 == 0)
-    {
-        tone = D;
-    }
-    else if (sw3 == 0)
-    {
-        tone = E;
-    }
-    else if (sw4 == 0)
-    {
-        tone = F;
-    }
-    else if (sw5 == 0)
-    {
-        tone = G;
-    }
-    else if (sw6 == 0)
-    {
-        tone = A;
-    }
-    else if (sw7 == 0)
-    {
-        tone = B;
-    }
-    else if (sw8 == 0)
-    {
-        tone = C2;
-    }
+    if      (!sw1)  tone = C;
+    else if (!sw2)  tone = D;
+    else if (!sw3)  tone = E;
+    else if (!sw4)  tone = F;
+    else if (!sw5)  tone = G;
+    else if (!sw6)  tone = A;
+    else if (!sw7)  tone = B;
+    else if (!sw8)  tone = C2;
 
     set_tone(tone);
 }
