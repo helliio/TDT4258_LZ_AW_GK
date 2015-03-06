@@ -11,7 +11,6 @@ int     base_sample_period  = 2500;
 int     sample_period       = 2500;
 bool    trigger_sound       = false;
 
-
 void __attribute__ ((interrupt)) TIMER1_IRQHandler() 
 {  
     *TIMER1_IFC = 1; 
