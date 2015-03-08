@@ -4,11 +4,9 @@
 #include <stdint.h>
 #include "efm32gg.h"
 #include "defines.h"
-#include "piano.h"
 
 int sound = 0;
 int sound_value = 0;
-int piano_position = 0;
 
 void lisa_gikk_til_skolen(void)
 {	// TPlay a simple song
@@ -47,7 +45,7 @@ void play_tone(int tone)
 	while(trigger_sound);
 }
 
-void play_piano_sound(void)
+void play_piano_sound()
 {
     sound = piano[piano_position];
     piano_position++;

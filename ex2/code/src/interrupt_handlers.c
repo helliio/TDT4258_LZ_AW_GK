@@ -5,11 +5,6 @@
 #include "defines.h"
 
 void interrupt_handler();
-/* TIMER1 interrupt handler */
-
-int     base_sample_period  = 2500;
-int     sample_period       = 2500;
-bool    trigger_sound       = false;
 
 void __attribute__ ((interrupt)) TIMER1_IRQHandler() 
 {  
