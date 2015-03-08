@@ -15,6 +15,7 @@
 	void play_piano_sound(void);
 	void mute(void);
 	void set_tone(int tone);
+	void sleep(void);
 
 	enum TONE
 		{ C = 10000
