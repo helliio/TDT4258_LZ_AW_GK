@@ -2,8 +2,23 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
+#include "defines.h"
 
-/* function to set up GPIO mode and interrupts*/
+void setupDAC()
+{
+    *CMU_HFPERCLKEN0    |=  1 << 17;
+    *DAC0_CTRL          =   0x50010;
+    *DAC0_CH0CTRL       =   1;
+    *DAC0_CH1CTRL       =   1;
+}
+
+void setupNVIC()
+{
+    * ISER0 |= 1<<1;
+    * ISER0 |= 1<<11;
+    * ISER0 |= 1<<12;   
+}
+
 void setupGPIO()
 {
     /* Example of HW access from C code: turn on joystick LEDs D4-D8
@@ -20,5 +35,13 @@ void setupGPIO()
     *GPIO_IEN           =   0xff;
 }
 
+/* function to setup the timer */
+void setupTimer(uint16_t period)
+{
+    *CMU_HFPERCLKEN0 |= 1<<6;
+    *TIMER1_TOP = period;
+    *TIMER1_IEN = 1;
+    *TIMER1_CMD = 1;
+}
 
 
