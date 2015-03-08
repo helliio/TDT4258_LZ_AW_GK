@@ -2,7 +2,7 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
-#include "sound.h"
+#include "defines.h"
 
 /* Declaration of peripheral setup functions */
 void setupTimer(uint32_t period);

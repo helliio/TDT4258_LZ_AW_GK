@@ -2,7 +2,7 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
-#include "sound.h"
+#include "defines.h"
 
 void interrupt_handler();
 /* TIMER1 interrupt handler */

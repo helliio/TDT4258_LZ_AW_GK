@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include "efm32gg.h"
-#include "sound.h"
+#include "defines.h"
 #include "piano.h"
 
 int sound = 0;
