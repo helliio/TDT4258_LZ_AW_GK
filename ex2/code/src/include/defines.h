@@ -11,10 +11,10 @@
 	extern int base_sample_period;
 	extern int sample_period;
 
-	void lisa_gikk_til_skolen	(void);
-	void play_piano_sound		(void);
-	void mute					(void);
-	void set_tone				(int tone);
+	void lisa_gikk_til_skolen(void);
+	void play_piano_sound(void);
+	void mute(void);
+	void set_tone(int tone);
 
 	enum TONE
 		{ C = 10000
@@ -24,6 +24,7 @@
 	    , G = 6673
 	    , A = 5945
 	    , B = 5296
-	    , C2= 5000};
+	    , C2= 5000
+		};
 
 #endif
