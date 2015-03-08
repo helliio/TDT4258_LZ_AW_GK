@@ -21,7 +21,7 @@ int main(void)
     
     lisa_gikk_til_skolen();
 
-    while(1);
+    sleep();
     return 0;
 }
 
