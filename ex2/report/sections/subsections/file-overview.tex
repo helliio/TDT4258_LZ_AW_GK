@@ -1,0 +1,15 @@
+\subsection{Overview of delivered code}
+The layout of the project is changed slightly from that of the provided support files:
+The all the source files were moved into a subdirectory \texttt{src/}, with all header files in \texttt{src/include/}.
+The makefile was changed to reflect these changes, and to put all generated object files in the separate subdirectory \texttt{obj/}.
+The makefile was also changed to automatically include all c-files in \texttt{src} in the compilation process.
+The files \texttt{dac.c}, \texttt{timer.c} and \texttt{gpio.c} were mere merged into one file \texttt{setup.c} to allow for a quick overview of the initialization steps.
+
+The file \texttt{ex2.c} contains the \texttt{main} function that initializes the hardware before playing a start-up tune.
+
+The generation and output of sound is handled in \texttt{sound.c}.
+
+Interrupt handlers for GPIO activity and timer events are all located in \texttt{interrupt\_handlers.c}.
+These simply trigger functionality defined in other source files.
+
+Convenience functions of little interest are defined in the file \texttt{helpers.c}.

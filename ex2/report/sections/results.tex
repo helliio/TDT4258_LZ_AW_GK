@@ -1,0 +1,19 @@
+\documentclass[../main.tex]{subfiles}
+\section{Results}
+
+To preserve power, different power settings were tried out. When a tone was played, the current was a constant 2.2 mA. However, when deep sleep and powering the DAC strategically was used, the power consumption was reduced significantly. Table \ref{tab:results} describes the power consumption when idling, i.e. not playing any tones.
+
+\begin{figure}[h]
+\label{tab:results}
+	\caption{power consumption}
+\begin{tabular}{ l l l }
+	Deep sleep	&	DAC	& current \\
+	off			&	on	& 2.1 mA \\
+	off			&	off	& 1.6 mA \\
+	on			& 	on	& 214 $\mu$A \\
+	on			&	off	& 1.0 $\mu$A 
+  	
+\end{tabular}
+\end{figure}
+
+As shown table \ref{tab:results}, the power consuption is improved by more than 2000 times by turing off the DAC when it is not in use and enabling deep sleep.
