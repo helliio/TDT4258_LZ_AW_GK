@@ -1,9 +1,10 @@
 \documentclass[../main.tex]{subfiles}
 \section{Generating Sound}
 
-Whenever a button is pushed \emph{handle\_gpio()} will trigger. The function first checks what gpio-pin is pushed before changing the interupt the corresponding frequency. Setting the frequency is decided by setting the amount of cycles between each interupt. The sampling frequency of the tone on speaker is decided by (ref).
+Whenever a button is pushed \emph{handle\_gpio()} will trigger. The function first checks what gpio-pin is pushed before changing the interupt the corresponding frequency. Setting the frequency is decided by setting the amount of cycles between each interupt. The sampling frequency of the tone on speaker is decided by (\ref{eq:sound}).
 
 \begin{equation}
+	\label{eq:sound}
 	F_s = \frac{F_{clk}}{n_{wait}}
 \end{equation}
 
