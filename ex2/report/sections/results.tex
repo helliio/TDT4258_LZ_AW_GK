@@ -1,0 +1,18 @@
+\documentclass[../main.tex]{subfiles}
+\section{Results}
+Different power settings was tested for their energy efficiency.
+The tests are preformed in combinations of turning DAC off when not in use and the deep sleep mode.
+The results are as follows:
+
+\begin{itemize}
+  \item Both DAC off setting and Deep sleep when idling: 1.0uA
+  \item Both DAC off setting and Deep sleep when a key is pressed: 2.2mA
+  \item Deep sleep when idling: 214uA
+  \item Deep sleep when a key is pressed: 2.2mA
+  \item DAC off setting when idling: 1.6mA
+  \item DAC off setting when a key is pressed: 2.2mA
+  \item No power saving implemented when idling: 2.1mA
+  \item No power saving implemented when a key is pressed: 2.2mA
+\end{itemize}
+
+As the results show, both the deep sleep mode and turning off the DAC when not in use has a huge impact on the power consumption.

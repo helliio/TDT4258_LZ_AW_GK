@@ -7,31 +7,31 @@ The implementation of the function is located in the /emph{setup.c} file.
 void setupGPIO()
 {
     /* enable GPIO clock*/
-    *CMU_HFPERCLKEN0   |=   CMU2_HFPERCLKEN0_GPIO;
+    *CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_GPIO;
     
     /* set high drive strength */
-    *GPIO_PA_CTRL       =   2;  
+    *GPIO_PA_CTRL = 2;  
     
     /* set pins A8-15 as output */
-    *GPIO_PA_MODEH      =   0x55555555; 
+    *GPIO_PA_MODEH = 0x55555555; 
     
     /* turn on LEDs D1-D8 (LEDs are active low) */
-    *GPIO_PA_DOUT       =   0x0000; 
+    *GPIO_PA_DOUT = 0x0000; 
     
     /* Set pins 0-7 */
-    *GPIO_PC_MODEL      =   0x33333333; 
+    *GPIO_PC_MODEL = 0x33333333; 
     
     /* Enable internal pull-up */
-    *GPIO_PC_DOUT       =   0xff; 
+    *GPIO_PC_DOUT = 0xff; 
     
     /* Write 0x22222222 to register */
-    *GPIO_EXTIPSELL     =   0x22222222; 
+    *GPIO_EXTIPSELL = 0x22222222; 
     
     /* Set interrupt on 1->0 transition */
-    *GPIO_EXTIFALL      =   0xff; 
+    *GPIO_EXTIFALL = 0xff; 
     
     /* Enable interrupt generation */
-    *GPIO_IEN           =   0xff; 
+    *GPIO_IEN = 0xff; 
 }
 \end{minted}
 
