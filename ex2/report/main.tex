@@ -1,0 +1,52 @@
+\documentclass[a4,journal,twoside]{IEEEtran}
+\usepackage{blindtext}
+\usepackage{graphicx}
+\usepackage{subfiles}
+\usepackage[detect-all]{siunitx}
+\usepackage{minted}
+\usepackage{todonotes}
+
+\usepackage[listings,skins]{tcolorbox}
+
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amsfonts}
+
+\usepackage[utf8]{inputenc}
+
+\title{
+    \textsc{Making Sounds on ARM Cortex-M3}\\
+    Exercise 2 in TDT4258
+}
+
+\author{
+    Aleksander~\textsc{Wasaznik},
+    Geir~\textsc{Kulia},
+    Liang~\textsc{Zhu}
+}
+
+\markboth{Exercise 2, TDT4258 Energy Efficient Computer Systems}{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+With the intention of producing sound on the EFM-32GG, the capabilites of the development board are examined, and a sampler and a simple synthetizer are developed.
+
+
+
+\end{abstract}
+
+% Chapters go here.
+\subfile{sections/handouts.tex}
+\subfile{sections/hardware.tex}
+\subfile{sections/setup.tex}
+\subfile{sections/introduction.tex}
+\subfile{sections/exercise.tex}
+\subfile{sections/matlab.tex}
+\subfile{sections/dac.tex}
+\subfile{sections/gpio.tex}
+\subfile{sections/sound.tex}
+
+\end{document}

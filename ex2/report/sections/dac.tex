@@ -1,0 +1,19 @@
+\documentclass[../main.tex]{subfiles}
+\section{DAC}
+DAC or the Digital to Analog Converter is used to generate analogue signals based on the digital values it receives.
+The DAC is connected to the 3.5mm headphone jack so that we could play the sound generated.
+Initialising the DAC for inputs is quite simple.
+Within the \emph{setup.c} file we have the \emph{setupDAC} function.
+
+\begin{minted}{objdump}
+void setupDAC()
+{
+    *CMU_HFPERCLKEN0    |=  1 << 17;
+    *DAC0_CTRL          =   0x50010;
+    *DAC0_CH0CTRL       =   1;
+    *DAC0_CH1CTRL       =   1;
+}
+\end{minted}
+
+This sets the DAC to get inputs from the \emph{DAC0\_CH0DATA} and the \emph{DAC0\_CH1DATA} registers.
+As this continuous stream of data is converted to a analogue signal by the DAC, a sound waves would be generated from the speakers connected to the jack.
