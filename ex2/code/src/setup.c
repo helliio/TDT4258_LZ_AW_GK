@@ -42,3 +42,7 @@ void setupTimer(uint16_t period)
 }
 
 
+void setup_energy_saving()
+{
+	*SCR = SCR_SLEEPDEEP | SCR_SLEEPONEXIT;
+}

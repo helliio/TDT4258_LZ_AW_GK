@@ -10,6 +10,7 @@ int main(void)
     setupTimer(sample_period);
     setupNVIC();
     setupGPIO();
+    setup_energy_saving();
     
     lisa_gikk_til_skolen();
 
