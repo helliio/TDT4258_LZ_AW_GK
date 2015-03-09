@@ -28,6 +28,10 @@
 	void timer1_clear_interrupt(void);
 	void handle_gpio();
 
+	void enable_deep_sleep(void);
+	void disable_deep_sleep(void);
+	void enable_sleep_on_exit(void);
+
 	enum TONE
 		{ C = 10000
 	    , D = 8908

@@ -40,9 +40,3 @@ void setupTimer(uint16_t period)
     *TIMER1_IEN = 1;
     *TIMER1_CMD = 1;
 }
-
-
-void setup_energy_saving()
-{
-	*SCR = SCR_SLEEPDEEP | SCR_SLEEPONEXIT;
-}

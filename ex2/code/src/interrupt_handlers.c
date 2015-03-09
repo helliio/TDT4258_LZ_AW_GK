@@ -8,6 +8,9 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 {  
     timer1_clear_interrupt();
     if (trigger_sound) play_piano_sound(); 
+    else
+    	// The timer is not needed anymore
+        enable_deep_sleep();
 }
 
 void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler() {handle_gpio();}
@@ -19,7 +22,7 @@ void handle_gpio(){
     uint32_t gipi_button_pushed = *GPIO_PC_DIN;
     
     // Mask to see if a button is pushed
-    uint32_t sw1 = gipi_button_pushed & 0x01;
+    uint32_t sw1 = gipi_button_pushed & 0x01;	
     uint32_t sw2 = gipi_button_pushed & 0x02;
     uint32_t sw3 = gipi_button_pushed & 0x04;
     uint32_t sw4 = gipi_button_pushed & 0x08;
@@ -29,6 +32,8 @@ void handle_gpio(){
     uint32_t sw8 = gipi_button_pushed & 0x80;
 
     trigger_sound = true;
+    // The timer is only available in energy modes above deep sleep
+    disable_deep_sleep();
     piano_position = 0;
 
     enum TONE tone;

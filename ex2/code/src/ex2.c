@@ -10,11 +10,11 @@ int main(void)
     setupTimer(sample_period);
     setupNVIC();
     setupGPIO();
-    //setup_energy_saving();
     
     lisa_gikk_til_skolen();
+    enable_sleep_on_exit();
 
+    enable_deep_sleep();
     sleep();
     return 0;
 }
-
