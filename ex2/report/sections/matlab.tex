@@ -4,7 +4,7 @@ A sample was used to simulate a piano tone. Another approach that was discussed 
 
 A recording of a piano playing the tone C was used to generate the signal. A MatLab then converted the script to an array. To save space at the microcontroller the sampling frequency was reduced by a factor on eight and the reverberation was drastically reduced. Values repeating themselves in the beginning and of the signal were also removed. 
 
-The convert the signal to match the values used by DAC in the c program on the microcontroller it was necessary to increase the numbers $\in [-1, 1]$ to $\in [0, \text{fff}_{16}]$. This was done with equation (\ref{eq:matlab}).
+The convert the signal to match the values used by DAC in the c program on the microcontroller it was necessary to map the numbers $\in [-1, 1]$ to $\in [0, \text{fff}_{16}]$. This was done with equation (\ref{eq:matlab}).
 
 \begin{equation}
 \label{eq:matlab}
