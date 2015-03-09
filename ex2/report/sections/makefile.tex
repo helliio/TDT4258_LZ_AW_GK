@@ -1,0 +1,14 @@
+\section{Changes to the Makefile}
+The makefile was changed to automactically use all C-files in the 'textt{src/} directory.
+To achieve this, a list of all the source files was created by globbing:
+
+\begin{minted}{objdump}
+    SOURCES := $(wildcard src/*.c)
+\end{minted}
+
+A list of corresponding object files is contructed by substitution:
+\begin{minted}{objdump}
+    OBJECTS := $(SOURCES:src/%.c=obj/%.o)
+\end{minted}
+
+The targets were updated to respect the \texttt{src/} and \texttt{obj/} directories, and the target for the \texttt{bin}-file was changed to depend on everything in \texttt{OBJECTS}.

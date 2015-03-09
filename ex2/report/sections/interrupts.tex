@@ -1,0 +1,10 @@
+\section{Usage of Interrupts}
+Whenever specific hardware events occur, the microcontroller can be configured to set aside what is's doing and handle it immediately.
+As it will be notified as nessesary, these events allow the microcontroller to avoid polling values peridically, and instead do something else or sleep to save power.
+
+The solution makes use of interrupts in both of these ways.
+Whenever possible, the microcontroller disables as many functions as possible, goest to sleep and waits for an interrupt for a button press from the GPIO.
+Interruprs are also made use of to do work periodically on presice intervals be reacting to timer events.
+
+The concrete procedure for setting up interrupts on the EFM-32GG is explained in the report for excercise 1\cite{ex1-report}.
+The use of interrupt handlers in C-code was already set up in the support files, and handlers with the correct synbols would by automatically linked as intended with the runtime in libefm32gg.a.
