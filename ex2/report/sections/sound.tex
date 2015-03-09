@@ -1,0 +1,20 @@
+\documentclass[../main.tex]{subfiles}
+\section{Generating Sound}
+
+Whenever a button is pushed \emph{handle\_gpio()} will trigger. The function first checks what gpio-pin is pushed before changing the interupt the corresponding frequency. Setting the frequency is decided by setting the amount of cycles between each interupt. The sampling frequency of the tone on speaker is decided by (\ref{eq:sound}).
+
+\begin{equation}
+	\label{eq:sound}
+	F_s = \frac{F_{clk}}{n_{wait}}
+\end{equation}
+
+Where $F_s$ is the samplingfrequency, $F_{text{clk}}$ is the clock speed and $n_{wait}$ the the amount of cycles the processor sleeps. The samplingfrequency also determin the output-signal’s own frequency. The value for $n_{wait}$ was choosen by listening to different values. 
+
+\emph{trigger\_sound} is set high during in the gpio-interupt. This will trigger the timer interupt \emph{play\_piano\_sound()} during the time interupt each $n_{\text{wait}}$ cycle. \emph{play\_piano\_sound()} sets the dac’s value to the piano-sample’s predefined value. When the sample is finished playing \emph{trigger\_sound} will be set low to avoid the tone to repeat itself. 
+
+After boot a song was played. A function was made to play the tones during this sequence, as it couldn’t relay on the gpio-interupts.  The fuction, \emph{play\_tone(int tone)} used 
+
+As this song didn’t trigger any gpio-interupt it was made a function to play a tone, called \emph{play\_tone(int)}. It used the enum tone as input to know what tone it should play by setting \emph{set\_tone(int)}. It then used the while-loop to wait until the tone was finished playing.
+
+The first disadvantage with this approach was that the song played very slowly as it had to wait for the reverberation to fade. The other one was that as we used the samling frequency to decide the frequency of the tone, higher tones lasted shorter than lower ones, making the song going out of step. However, these qualities may arguably suit the song choisen, as reflexts that the song “Lisa gikk til skolen“ is mostly played by pianists without any skills.
+

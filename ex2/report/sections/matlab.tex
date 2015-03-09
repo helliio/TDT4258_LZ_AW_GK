@@ -1,0 +1,30 @@
+\documentclass[../main.tex]{subfiles}
+\section{Piano Sample}
+A sample was used to simulate a piano tone. Another approach that was discussed was to generate the sound from the Fourier transform. To use a sample was preferable because it is less power consuming to look up a table than to calculate a waveform based on a Fourier transform as this is a more costly operations for the ALU, taking several cycles. 
+
+A recording of a piano playing the tone C was used to generate the signal. A MatLab then converted the script to an array. To save space at the microcontroller the sampling frequency was reduced by a factor on eight and the reverberation was drastically reduced. Values repeating themselves in the beginning and of the signal were also removed. 
+
+The convert the signal to match the values used by DAC in the c program on the microcontroller it was necessary to map the numbers $\in [-1, 1]$ to $\in [0, \text{fff}_{16}]$. This was done with equation (\ref{eq:matlab}).
+
+\begin{equation}
+\label{eq:matlab}
+	y_{dac} = \frac{(x_{mp3} + 1)}{2} \cdot 2^{12}
+\end{equation}
+
+Here $x_{mp3}$ is the signal loaded from the mp3-file and $y_{dac} \in \mathbb{Z}_{\text{fff}_{16}}$  is a signal with corresponding values to match the DAC. The MatLab code below shows how this was implemented.
+\\ \\
+
+\begin{minted}{matlab}
+
+y = y(y ~= 0); % Remove all zeros
+
+% Decrese Fs and reverberation
+y = y(1:8:length(y)/5); 
+
+y = round((y + 1) .* 2^11);
+y = y(y ~= 2048); % remove 0x800 bec. Repeat
+
+\end{minted}
+
+Then the array was formatted and exported to a header file. 
+
