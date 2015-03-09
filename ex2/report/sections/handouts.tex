@@ -1,14 +1,14 @@
 \documentclass[../main.tex]{subfiles}
 \section{Handed-out Materials}
-The handed-out framework comes with a convenient makefile.
-The makefile had targets for building the file for uploading, the ELF file used with GDB and for actually uploading the code to the microcontroller.
+The handed-out framework comes with a convenient make file.
+The make file had targets for building the file for uploading, the ELF file used with GDB and for actually uploading the code to the micro-controller.
 
-Since we are going to do the coding in the programming languge C we were given a \emph{efm32gg.h} file that contained all the registres that we will need in this exsercise.
+Since we are going to do the coding in the programming language C we were given a \emph{efm32gg.h} file that contained all the registries that we will need in this exercises.
 The skeleton code is spread across 4 \emph{.c} files.
 The files were \emph{dac.c} \emph{ex2.c} \emph{gpio.c} \emph{interrupt\_handler.c} and \emph{timer.c}.
-The \emph{dac.c} file has the sole purpose of enabling the digital/analouge converter.
+The \emph{dac.c} file has the sole purpose of enabling the digital/analogue converter.
 
-\emph{timer.c} is a file that enables the timer interupts.
+\emph{timer.c} is a file that enables the timer interrupts.
 \emph{gpio.c} is a file that initializes the GPIO registers.
-\emph{interrupt\_handler.c} is where we handle the GPIO interrupts and the timer interuptes.
-Finally the \emph{ex2.c} is where the main function is and where the initialisers where ran.
+\emph{interrupt\_handler.c} is where we handle the GPIO interrupts and the timer interrupts.
+Finally the \emph{ex2.c} is where the main function is and where the setup functions are ran.
