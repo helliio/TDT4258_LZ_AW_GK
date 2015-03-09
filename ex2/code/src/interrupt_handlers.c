@@ -4,30 +4,18 @@
 #include "efm32gg.h"
 #include "defines.h"
 
-void interrupt_handler();
-
 void __attribute__ ((interrupt)) TIMER1_IRQHandler() 
 {  
-    *TIMER1_IFC = 1; 
+    timer1_clear_interrupt();
     if (trigger_sound) play_piano_sound(); 
 }
 
-/* GPIO even pin interrupt handler */
-void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler() 
-{
-    interrupt_handler();
-}
+void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler() {handle_gpio();}
+void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler() {handle_gpio();}
 
-/* GPIO odd pin interrupt handvoid interrupt_handler()ler */
-void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler() 
-{
-    interrupt_handler();
-}
+void handle_gpio(){
 
-void interrupt_handler(){
-
-    * GPIO_IFC = 0xff;
-
+	gpio_clear_interrupt();
     uint32_t gipi_button_pushed = *GPIO_PC_DIN;
     
     // Mask to see if a button is pushed
@@ -56,5 +44,3 @@ void interrupt_handler(){
 
     set_tone(tone);
 }
-
-

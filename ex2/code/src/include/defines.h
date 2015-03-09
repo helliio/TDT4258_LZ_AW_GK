@@ -4,6 +4,9 @@
 #ifndef test_extern_sound_h
 #define test_extern_sound_h
 
+	#define SCR_SLEEPONEXIT (1<<1)
+	#define SCR_SLEEPDEEP (1<<2)
+
 	extern 		 int 		piano_position;
 	extern 		 bool 		trigger_sound;
 	extern 		 int 		base_sample_period;
@@ -21,6 +24,9 @@
 	void setupNVIC(void);
 	void setupGPIO(void);
 	void setupTimer(uint16_t period);
+	void setup_energy_saving(void);
+	void timer1_clear_interrupt(void);
+	void handle_gpio();
 
 	enum TONE
 		{ C = 10000
