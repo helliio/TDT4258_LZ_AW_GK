@@ -1,18 +1,19 @@
 \documentclass[../main.tex]{subfiles}
 \section{Results}
-Different power settings was tested for their energy efficiency.
-The tests are preformed in combinations of turning DAC off when not in use and the deep sleep mode.
-The results are as follows:
 
-\begin{itemize}
-  \item Both DAC off setting and Deep sleep when idling: 1.0uA
-  \item Both DAC off setting and Deep sleep when a key is pressed: 2.2mA
-  \item Deep sleep when idling: 214uA
-  \item Deep sleep when a key is pressed: 2.2mA
-  \item DAC off setting when idling: 1.6mA
-  \item DAC off setting when a key is pressed: 2.2mA
-  \item No power saving implemented when idling: 2.1mA
-  \item No power saving implemented when a key is pressed: 2.2mA
-\end{itemize}
+To preserve power, different power settings were tried out. When a tone was played, the current was a constant 2.2 mA. However, when deep sleep and powering the DAC strategically was used, the power consumption was reduced significantly. Table \ref{tab:results} describes the power consumption when idling, i.e. not playing any tones.
 
-As the results show, both the deep sleep mode and turning off the DAC when not in use has a huge impact on the power consumption.
+\begin{figure}[h]
+\label{tab:results}
+	\caption{power consumption}
+\begin{tabular}{ l l l }
+	Deep sleep	&	DAC	& current \\
+	off			&	on	& 2.1 mA \\
+	off			&	off	& 1.6 mA \\
+	on			& 	on	& 214 $\mu$A \\
+	on			&	off	& 1.0 $\mu$A 
+  	
+\end{tabular}
+\end{figure}
+
+As shown table \ref{tab:results}, the power consuption is improved by more than 2000 times by turing off the DAC when it is not in use and enabling deep sleep.
