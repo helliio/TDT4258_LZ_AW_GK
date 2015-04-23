@@ -9,4 +9,8 @@ mount -t sysfs sys /sys
 
 
 export PATH=$PATH:/sbin:/usr/bin:/bin
+
+modprobe driver-gamepad
+mknod /dev/pad c 42 0
+
 exec /bin/sh
