@@ -57,9 +57,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    // closing the fd will not affect the mmaping
-    close(fbfd);
-
     draw_something(fb);
 
     struct fb_copyarea rect
@@ -73,6 +70,8 @@ int main(int argc, char *argv[])
     ioctl(fbfd, 0x4680, &rect);
 
     munmap(fb, 2*SCREEN_SIZE);
+
+    close(fbfd);
 
 	exit(EXIT_SUCCESS);
 }
