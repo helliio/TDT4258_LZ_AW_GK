@@ -80,7 +80,7 @@ void update_ball(void)
 
     if(
             (ball_dir == left
-             && ball.x <= (pad_l.x + pad_l.w)
+             && ball.x < (pad_l.x + pad_l.w)
              && (ball.y + ball.h) > pad_l.y
              && ball.y < (pad_l.y + pad_l.h)
              )
