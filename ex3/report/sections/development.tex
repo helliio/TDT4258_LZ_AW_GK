@@ -11,6 +11,18 @@ kernel
 root filesystem
 
 \subsection{Gamepad Driver}
+Pong was the very first sports arcade videogame ever created\cite{pong}. The aim of the goal is to hit the ball, represented with a dot, with your bat, represented by a line. The line can be moved up and down. You loose when the ball hit outside your bat. You win if and only if you hit the ball outside the opponent’s bat. However, we made the bot unbeatable as a gag.
 
-\subsection{The game}
+\subsection{Draw rect}
+The first element needed was the possibility to draw a rectangle. There was two functions to do this. As function overloading isn’t supported in C, contrary to C++, the functions were called \texttt{draw\_rect} and \texttt{really\_draw\_rect}. The difference between these functions was that \texttt{draw\_rect} took a struct containing all properties of as input, while \texttt{really\_draw\_rect} used \texttt{int}s. 
+\\ \\
+As mentioned above, \texttt{draw\_rect} took a \texttt{struct} as input.  The \texttt{struct} contain coordinates of the height and width of the object, as well as new and old coordinates of its movement. It then colour draw a new white rectangle after drawing a black one over the old. This is done using the \texttt{really\_draw\_rect} function. 
 
+\subsection{draw ball}
+To draw the ball the \texttt{update\_ball} function is used. WRITE SOMETHING ABOUT THE LOGIC. I DON’T UNDERSTAND!
+
+\subsection{GPIO input}
+To update the movement of the paddle, the function \texttt{update\_paddle} was used. It used the logic described in the compendium\cite{compendium} and compared it to \textt{din}.
+
+\subsection{Main}
+To run the whole game, the gamepad and framebufer was first initialized. Then the function \texttt{update\_game} was runned in an neverending loop. This function contained the properties described above. 
