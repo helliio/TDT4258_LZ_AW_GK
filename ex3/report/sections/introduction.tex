@@ -1,14 +1,40 @@
 \documentclass[../main.tex]{subfiles}
 \section{Introduction}
 The main goal of this excercise was to implement a driver for Linux for the same gamepad used in the previous excercises\cite{ex1}\cite{ex2}.
-The driver should have the features nessesary for using the gamepad in the game also developed for this excercise.
+The driver should have the features nessesary for the game, also developed for this excercise.
 
-\subsection{The Game}
+\subsection{Pong}
 The choice of game was the classic, Pong.
-Pong is one of the very first arcade video games ever made\cite{pong}.
-The game is a simplified game of table tennis in two dimentions, as seen from the top.
-See Figure \ref{pong} for a illustration.
-It is a competitive game where two players use a pad on the edge of the screen to knock a ball past the oponents pad.
+Pong is one of the first arcade games ever made.
+The game is a minimalistic game of table tennis in two dimensions, with a top view.
+Two players each have a pad on oposing edges of the screen that can be moved along the edge.
+They compete to knock a ball past the pad of the oponent using their pad.
+The ball bounces against the non-player sides and has constant velocity when not bouncing.
+The game is thus more akin to air hockey with a large goal than table tennis.
+See Figure \ref{fig:pong} for an illustration.
 
-\subsubsection{}
-What it does. What features it need from the driver.
+\subsection{What the game is structured around}
+When developing a game there is a need to identify what external factors drive it.
+While in play, the ball moves as time passes
+and the pads move as time passes depending on the input for the players.
+In this state, the game clearly only advances on time intervals.
+The game thus needs to have access to the state of the gamepad buttons every time the game state progresses.
+This is a good fit for simply polling the driver when input is needed.
+If the cost of the syscalls dominates, using input-change interrupts might help.
+
+The game will need to display its graphics on the screen on the development board.
+
+\subsection{Gamepad driver}
+In the previous excercises, the programs accessed hardware periperals directly.
+However, unlike the situation in the previous excercises, the program now runs under the Linux kernel.
+It is the job of the kernel to manage shared resources, such as processor, memory and other hardware.
+User space programs such as the game should be unable to interfere with one another
+, and should access hardware though a safe and abstracted interface.
+
+It is the role of a device driver to mediate access to hardware for unprivileged programs
+, and ensure that multiple programs concurrently wishing for access do not interfere with each other.
+Drivers are executed in kernel mode, allowing access to hardware.
+The driver communicates with user-space programs by exposing \emph{device nodes} which special files in the filesystem can be associated with.
+
+At its most basic, the driver for the gamepad should support reading the current state of the buttons in some way.
+Favouring simplicity, the driver should just yield a byte that is a bitmask over the button positions.

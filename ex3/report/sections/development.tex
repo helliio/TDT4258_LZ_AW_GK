@@ -10,7 +10,105 @@ bootloader
 kernel
 root filesystem
 
-\subsection{Gamepad Driver}
+\subsection{Framebuffer}
+Linux takes inspiration from UNIX in that a lot of resources appear as files in filesystem.
+Indeed, the contents of a screen can be manipulated through a file with a framebuffer device.
+The framebuffer file is a character file which contains the pixel values on the screen in left-to-right downwards order.
+The way color is represented varies from screen to screen.
+In this case the pixels are represented by 5-6-5 bits of red-green-blue.
 
-\subsection{The game}
+There is only one screen on the development board.
+It is the first framebuffer device with mayor and minor numbers 29 0.
+A file for the framebuffer can be found at \texttt{/dev/fb0}.
 
+\subsubsection{Using the Framebuffer}
+As the framebuffer is a file, changing the contents of the screen is as simple as writing to the file.
+For testing, a program that shows a color pattern on the screen by writing to the file using normal file operations.
+The program \texttt{open}ed the file for writing, and filled the screen with one \texttt{write} per pixel.
+The result was dismaying, as only a few lines at the top of the screen were altered repeatedly.
+It would seen as if the position in the file gets reset after too many writes.
+Since using the framebuffer file with file opeartions is apparently unusual, there were no hints as how to solve this.
+Filling the whole screen in one write operation did work, however that requires a buffer as large as framebuffer in memory.
+That is neither optimal, nor will it fit on the stack.
+Trying to write to a buffer this size on the stack, just crashes the operating system.
+
+The most common and convenient way to use the framebuffer is to map its contents to memory.
+This is accomplished by opening the framebuffers character file.
+\texttt{mmap} needs it to be opened in read-write mode even if only writing is desired.
+Then a shared memory mapping needs to be establised.
+The call to \texttt{mmap} will return the address at which the contents of the file can be found.
+
+\begin{minted}[c]
+fbfd = open("/dev/fb0", O_RDRW);
+fd = mmap(NULL, fb_length, PROT_WRITE, MAP_SHARED, fbfd, 0);
+\end{minted}
+
+Letting fb have the type
+
+\begin{minted}[c]
+pixel_t (*fb)[screen_height][screen_width]
+\end{minted}
+
+allows the screen to be updated conveniently by
+
+\begin{minted}[c]
+(*fb)[y][x] = color
+\end{minted}
+
+The particular driver for the screen on the EFM32GG needs to be told to update the screen explicitly.
+Presumably because updating in bulks is more efficient.
+The way to request a screen update is to issue \texttt{ioctl} 0x4680 along with a datastructure describing the screen location of the update.
+
+The mmap aproach was chosen for the game because it worked right away and was most conveient.
+
+\subsubsection{Static Scene}
+First, a program rendering a still scene of the game was made.
+The graphics of Pong consists solely of rectangular shapes.
+The two rectangular pads and the square ball.
+A function for drawing such a primitive was written.
+The function takes a struct describing the width, height and coordinates of a rectangle.
+The scene is thus described in three statically allocated structs.
+
+\subsubsection{Animation}
+Next, the ball was made to move across the screen.
+A naive aproach to rendering graphics is to redraw the whole screen at each frame.
+This proved to be rather slow.
+There are two separate but related processes that need to be sped up;
+The rendering and transfering to screen.
+
+It is cheaper to render just the difference between two frames of animation.
+The structs describing the rectangles were altered to hold the coordinates the object was previously rendered at.
+This allows a rendering function to render only the difference.
+The assumption that two objects will never overlap allows each object to still be treated independently, not needing redrawing on each frame.
+However, to avoid artefacts when an objects rendered first moves into the previous position of an object erased later
+, all erazures must happens before drawing.
+
+It became apparent that transfering to screen was the most costly operation.
+To do less updates, bounding boxes for changes were provided to the driver, giving a great speedup.
+To avoid flickering, it is important that only parts of the screen that have finished rendering all objects are updated.
+
+When animating, it is important that the speed of animation is independent of the workload or complexity of the scene.
+
+\subsubsection{Physics}
+The physics of the game are simple and consist of moving the ball and making it bounce of walls and pads upon contact
+, calculating the angle of bounce on a pad depending on where the ball hit the pad.
+The accuracy of such physics depends on how small the animations steps are.
+It was found that the game ran fast enough for single pixel movement.
+
+\subsubsection{Driver}
+The driver reserves and initializes the hardware upon load.
+It then registers a character device.
+Whenever a read is performed on the character device
+, the driver reads the buttons pressed from the GPIO hardware registers
+and returns it as a bitmap integer.
+
+The reserving is done by means of reserve\_region:
+..code..
+This function does not have any purpose, but to deny two reservations of the same address space.
+A good question is then what address to reserve as a token to prevent interference.
+Ideally, we would like to have exclusive access to control PC pins 0-7.
+It is also acceptable to take the whole PC.
+If interrupts are to be used, the interrupt control register should also be taken control over.
+
+The character device is registered by:
+..code..
