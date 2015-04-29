@@ -31,17 +31,15 @@
 \begin{document}\maketitle
 
 \begin{abstract}
-uClinux was installed on the EFM32GG
-.
-A Pong-like game was implemented
-, using mmaped framebuffer for output
-, and a custom driver for the GPIO gamepad for input
-.
+The objective of this exercise is to give a better understanding of linux device drivers. This was done by developing a black and white version of the classic game Pong\cite{pong}. The game was controlled by the gamepad used in previous exercises\cite{ex1}\cite{ex2}.
+
+To be able to interact with the gamepad a device driver was implemented. This device driver is dependent on the hardware of the ARM Cortex-M3 and is Linux-spesific. It works as a program that operates the interaction between the and the software on the ARM Cortex-M3 and the gamepad.
 \end{abstract}
 
 % Chapters go here.
 \subfile{sections/introduction.tex}
 \subfile{sections/development.tex}
+\subfile{sections/conclusion.tex}
 \subfile{bib.tex}
 
 \end{document}

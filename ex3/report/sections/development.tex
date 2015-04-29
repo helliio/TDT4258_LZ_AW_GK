@@ -38,20 +38,21 @@ This is accomplished by opening the framebuffers character file.
 Then a shared memory mapping needs to be establised.
 The call to \texttt{mmap} will return the address at which the contents of the file can be found.
 
-\begin{minted}[c]
+\begin{minted}{c}
 fbfd = open("/dev/fb0", O_RDRW);
-fd = mmap(NULL, fb_length, PROT_WRITE, MAP_SHARED, fbfd, 0);
+fd = mmap(NULL, fb_length, PROT_WRITE,
+          MAP_SHARED, fbfd, 0);
 \end{minted}
 
 Letting fb have the type
 
-\begin{minted}[c]
+\begin{minted}{c}
 pixel_t (*fb)[screen_height][screen_width]
 \end{minted}
 
 allows the screen to be updated conveniently by
 
-\begin{minted}[c]
+\begin{minted}{c}
 (*fb)[y][x] = color
 \end{minted}
 
@@ -61,7 +62,7 @@ The way to request a screen update is to issue \texttt{ioctl} 0x4680 along with 
 
 The mmap aproach was chosen for the game because it worked right away and was most conveient.
 
-\subsubsection{Static Scene}
+\subsection{Static Scene}
 First, a program rendering a still scene of the game was made.
 The graphics of Pong consists solely of rectangular shapes.
 The two rectangular pads and the square ball.
@@ -69,7 +70,7 @@ A function for drawing such a primitive was written.
 The function takes a struct describing the width, height and coordinates of a rectangle.
 The scene is thus described in three statically allocated structs.
 
-\subsubsection{Animation}
+\subsection{Animation}
 Next, the ball was made to move across the screen.
 A naive aproach to rendering graphics is to redraw the whole screen at each frame.
 This proved to be rather slow.
@@ -80,8 +81,7 @@ It is cheaper to render just the difference between two frames of animation.
 The structs describing the rectangles were altered to hold the coordinates the object was previously rendered at.
 This allows a rendering function to render only the difference.
 The assumption that two objects will never overlap allows each object to still be treated independently, not needing redrawing on each frame.
-However, to avoid artefacts when an objects rendered first moves into the previous position of an object erased later
-, all erazures must happens before drawing.
+However, to avoid artefacts when an objects rendered first moves into the previous position of an object erased later, all erazures must happens before drawing.
 
 It became apparent that transfering to screen was the most costly operation.
 To do less updates, bounding boxes for changes were provided to the driver, giving a great speedup.
@@ -89,26 +89,35 @@ To avoid flickering, it is important that only parts of the screen that have fin
 
 When animating, it is important that the speed of animation is independent of the workload or complexity of the scene.
 
-\subsubsection{Physics}
-The physics of the game are simple and consist of moving the ball and making it bounce of walls and pads upon contact
-, calculating the angle of bounce on a pad depending on where the ball hit the pad.
+\subsection{Physics}
+The physics of the game are simple and consist of moving the ball and making it bounce of walls and pads upon contact, calculating the angle of bounce on a pad depending on where the ball hit the pad.
 The accuracy of such physics depends on how small the animations steps are.
 It was found that the game ran fast enough for single pixel movement.
 
-\subsubsection{Driver}
+\subsection{Driver}
 The driver reserves and initializes the hardware upon load.
 It then registers a character device.
 Whenever a read is performed on the character device
 , the driver reads the buttons pressed from the GPIO hardware registers
 and returns it as a bitmap integer.
 
-The reserving is done by means of reserve\_region:
-..code..
+The reserving is done by means of reserve\_region.
 This function does not have any purpose, but to deny two reservations of the same address space.
 A good question is then what address to reserve as a token to prevent interference.
 Ideally, we would like to have exclusive access to control PC pins 0-7.
-It is also acceptable to take the whole PC.
+It is also acceptable to take the whole PC, which is what we choose to do.
 If interrupts are to be used, the interrupt control register should also be taken control over.
 
-The character device is registered by:
-..code..
+The character device is created by registering a device number:
+\begin{minted}{c}
+dev_t dev = MKDEV(MAJOR_NUMBER, 0);
+register_chrdev_region(dev, 1, NAME);
+\end{minted}
+
+and telling Linux about it:
+
+\begin{minted}{c}
+cdev_init(&cdev, &fops);
+cdev.owner = THIS_MODULE;
+cdev_add(&cdev, dev, 1);
+\end{minted}
